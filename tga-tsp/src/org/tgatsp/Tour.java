@@ -2,21 +2,23 @@ package org.tgatsp;
 
 import java.util.*;
 
-public class Tour
+public class Tour implements Cloneable
 {
 	private ArrayList<Cliente> tour;
-	private Float fitness;
-	boolean complete;
+	private Float lenght;
 	
-	public Tour ()
-	{
-		complete=false;
-	}
-	
-	public Tour (ArrayList<Cliente> t, boolean complete)
+	private Tour (ArrayList<Cliente> t, float lenght)
 	{
 		this.tour=t;
-		this.complete=complete;
+		this.lenght=lenght;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object clone()
+	{
+		Tour t = new Tour((ArrayList<Cliente>)tour.clone(), lenght.floatValue());
+		return t;
 	}
 	
 	public boolean addCliente(Cliente c)
@@ -32,42 +34,46 @@ public class Tour
 		}
 	}
 	
-	private void calculateFitness()
+	private void calculateLenght()
 	{
 		float temp =0;
 		for(int i=1; i<tour.size(); i++)
 		{
 			temp+=tour.get(i).calculateDistance(tour.get(i-1));    // Distance between i and i-1
 		}
-		fitness= new Float(temp);	
+		lenght= new Float(temp);	
 	}
 	
-	public float getFitness()
+	public float getLenght()
 	{
-		if (fitness!=null)
+		if (lenght!=null)
 		{
-			return fitness.floatValue();
+			return lenght.floatValue();
 		}
 		else
 		{
-			this.calculateFitness();
-			return fitness.floatValue();
+			this.calculateLenght();
+			return lenght.floatValue();
 		}
 	}
 	
-	public void setFitness(float fitness)
+	public void setFitness(float lenght)
 	{
-		this.fitness=fitness;
+		this.lenght=lenght;
 	}
 	
-	public boolean isComplete()
+	public ArrayList<Cliente> getTour()
 	{
-		return complete;
+		return tour;
 	}
 	
-	public void setComplete(boolean complete)
+	public boolean equals(Tour t)
 	{
-		this.complete=complete;
+		if (tour.equals(t.getTour()))
+			return true;
+		else
+			return false;
 	}
+	
 	
 }
