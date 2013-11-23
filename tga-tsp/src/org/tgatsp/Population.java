@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Population {
 	
-	private LinkedList<Solution> population;
+	private List<Solution> population;
 	private int size;
 	
 	public void addSolution (Solution s)

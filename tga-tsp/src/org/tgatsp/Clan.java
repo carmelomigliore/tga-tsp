@@ -1,27 +1,34 @@
 package org.tgatsp;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.concurrent.*;
 
-public class Clan implements Cloneable{
+public class Clan {
 	
 	private int id;
-	private ArrayList<Integer> tabu;
-	private int tabuSize;
+	private LinkedBlockingQueue<Integer> tabu;
 	
 	
-	private Clan (int id, ArrayList<Integer> tabu, int tabuSize)
+	public Clan (int id, int tabuSize)
+	{
+		this.id=id;
+		this.tabu= new LinkedBlockingQueue<Integer>(tabuSize);
+	}
+	
+	public Clan (int id, LinkedBlockingQueue<Integer> tabu)
 	{
 		this.id=id;
 		this.tabu=tabu;
-		this.tabuSize=tabuSize;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object clone()
+	public Clan copy()
 	{
-			Clan c = new Clan(this.id, (ArrayList<Integer>)tabu.clone(), this.tabuSize);
-			return c;
+		LinkedBlockingQueue<Integer> temp = new LinkedBlockingQueue<Integer>(tabu.size()+tabu.remainingCapacity());
+		for (Iterator<Integer> it=tabu.iterator(); it.hasNext();)
+		{
+			temp.offer(it.next());
+		}
+		return new Clan(this.id, temp);
 	}
 	
 	public void setId(int id)
@@ -34,24 +41,14 @@ public class Clan implements Cloneable{
 		return id; 
 	}
 
-	public void setTabu(ArrayList<Integer> tabu)
+	public void setTabu(LinkedBlockingQueue<Integer> tabu)
 	{
 		this.tabu = tabu;
 	}
 	
-	public ArrayList<Integer> getTabu()
+	public LinkedBlockingQueue<Integer> getTabu()
 	{
 		return tabu;
-	}
-	
-	public int getTabuSize()
-	{
-		return tabuSize;
-	}
-	
-	public void setTabuSize(int tabuSize)
-	{
-		this.tabuSize=tabuSize;
 	}
 	
 	

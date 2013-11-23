@@ -1,36 +1,36 @@
 package org.tgatsp;
 
-public class Solution implements Cloneable{
+public class Solution{
 	
-	private Tour gene;
+	private Tour chromosome;
 	private Clan clan;
 	private float fitness;
 	
 	public Solution(Tour t, Clan c, float fitness)
 	{
-		gene=t;
+		chromosome=t;
 		clan=c;
 		this.fitness=fitness;
 	}
 	
-	public Tour cloneGene()
+	public Tour clonechromosome()
 	{
-		return (Tour)gene.clone();
+		return (Tour)chromosome.copy();
 	}
 	
-	public Clan cloneFitness()
+	public Clan cloneClan()
 	{
-		return (Clan)clan.clone();
+		return (Clan)clan.copy();
 	}
 	
-	public Tour getGene()
+	public Tour getchromosome()
 	{
-		return gene;
+		return chromosome;
 	}
 	
-	public void setGene(Tour t)
+	public void setchromosome(Tour t)
 	{
-		this.gene=t;
+		this.chromosome=t;
 	}
 	
 	public Clan getClan()
