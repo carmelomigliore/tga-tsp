@@ -6,7 +6,7 @@ package org.tgatsp;
 
 public class Cliente
 {
-	int id;
+	Integer id;
 	Coordinates coord;
 	
 	
@@ -25,5 +25,24 @@ public class Cliente
 	public Coordinates getCoordinates()
 	{
 		return coord;
-	}		
+	}
+	
+	public int getId()
+	{
+		return id;
+	}
+	
+	public boolean equals(Cliente c)
+	{
+		if (this.id==c.id)
+			return true;
+		else
+			return false;
+		
+	}
+	
+	public String toString()
+	{
+		return ""+id;
+	}
 }

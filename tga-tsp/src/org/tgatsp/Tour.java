@@ -6,10 +6,12 @@ public class Tour
 {
 	private ArrayList<Cliente> tour;
 	private Float length;
+	public static Cliente[] listaClienti;
 	
 	public Tour (int size)
 	{
 		this.tour = new ArrayList<Cliente>(size);
+		while(tour.size() < size) tour.add(null);
 	}
 	
 	public Tour (ArrayList<Cliente> t, Float length)
@@ -46,6 +48,24 @@ public class Tour
 		{
 			return false;
 		}
+	}
+	
+	public boolean addCliente(int i, Cliente c)
+	{
+		if(!tour.contains(c))
+		{
+			tour.set(i,c);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public Cliente getCliente(int i)
+	{
+		return tour.get(i);
 	}
 	
 	private void calculatelength()
@@ -89,5 +109,16 @@ public class Tour
 			return false;
 	}
 	
+	public int getSize()
+	{
+		return tour.size();
+	}
+	
+	public String toString()
+	{
+		return tour.toString();
+	}
+	
+
 	
 }

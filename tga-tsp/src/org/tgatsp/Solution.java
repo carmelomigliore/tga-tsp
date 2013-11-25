@@ -4,7 +4,8 @@ public class Solution{
 	
 	private Tour chromosome;
 	private Clan clan;
-	private float fitness;
+	private Float fitness;
+	private Float window;
 	
 	public Solution(Tour t, Clan c, float fitness)
 	{
@@ -50,7 +51,28 @@ public class Solution{
 	
 	public float getFitness()
 	{
-		return fitness;
+		if(fitness!=null)
+			return fitness;
+		else
+		{
+			fitness=1/chromosome.getlength();
+			return fitness;
+		}
+	}
+	
+	public void setWindow(float window)
+	{
+		this.window=window;
+	}
+	
+	public float getWindow()
+	{
+		return window;
+	}
+	
+	public String toString()
+	{
+		return chromosome.toString() + "|" + clan.toString() + " Fitness: "+fitness + "\n";
 	}
 
 }

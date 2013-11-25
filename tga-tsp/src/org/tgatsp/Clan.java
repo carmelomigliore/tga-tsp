@@ -21,7 +21,7 @@ public class Clan {
 		this.tabu=tabu;
 	}
 	
-	public Clan copy()
+	public synchronized Clan copy()
 	{
 		LinkedBlockingQueue<Integer> temp = new LinkedBlockingQueue<Integer>(tabu.size()+tabu.remainingCapacity());
 		for (Iterator<Integer> it=tabu.iterator(); it.hasNext();)
@@ -41,7 +41,7 @@ public class Clan {
 		return id; 
 	}
 
-	public void setTabu(LinkedBlockingQueue<Integer> tabu)
+	public synchronized void setTabu(LinkedBlockingQueue<Integer> tabu)
 	{
 		this.tabu = tabu;
 	}
@@ -58,6 +58,30 @@ public class Clan {
 			return true;
 		else
 			return false;
+	}
+	
+	public synchronized boolean isTabu (Integer clan)
+	{
+		if (tabu.contains(clan))
+			return true;
+		else
+			return false;
+	}
+	
+	public synchronized void addTabu(Integer clan)
+	{
+		if (tabu.remainingCapacity()==0)
+		{
+			try
+			{
+				tabu.take();
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		tabu.offer(clan); //TODO se fallisce lanciare eccezione
 	}
 
 }
