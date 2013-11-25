@@ -1,5 +1,7 @@
 package org.tgatsp;
 
+import java.util.Random;
+
 public class Solution{
 	
 	private Tour chromosome;
@@ -73,6 +75,17 @@ public class Solution{
 	public String toString()
 	{
 		return chromosome.toString() + "|" + clan.toString() + " Fitness: "+fitness + "\n";
+	}
+	
+	public void mutate(Random rand)
+	{
+		Tour t = new Tour(chromosome.getSize());
+		int cut = rand.nextInt(chromosome.getSize());
+		
+		for(int j=cut; j<chromosome.getSize(); j++)
+		{
+			
+		}
 	}
 
 }

@@ -71,10 +71,12 @@ public class Tour
 	private void calculatelength()
 	{
 		float temp =0;
-		for(int i=1; i<tour.size(); i++)
+		int i;
+		for(i=1; i<tour.size(); i++)
 		{
 			temp+=tour.get(i).calculateDistance(tour.get(i-1));    // Distance between i and i-1
 		}
+		temp+=tour.get(i-1).calculateDistance(tour.get(0)); //Distanza tra l'ultimo ed il primo
 		length= new Float(temp);	
 	}
 	
