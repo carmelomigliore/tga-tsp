@@ -2,8 +2,8 @@ package org.tgatsp;
 
 public class Coordinates
 {
-	public float x;
-	public float y;
+	public final float x;
+	public final float y;
 
 
 

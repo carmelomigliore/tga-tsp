@@ -4,9 +4,9 @@ import java.util.*;
 
 public class Tour
 {
-	private ArrayList<Cliente> tour;
+	private final ArrayList<Cliente> tour;
 	private Float length;
-	public static Cliente[] listaClienti;
+	
 	
 	public Tour (int size)
 	{
@@ -37,30 +37,38 @@ public class Tour
 		return new Tour (temp, null);
 	}
 	
-	public boolean addCliente(Cliente c)
+	public void addCliente(Cliente c)
 	{
 		if(!tour.contains(c))
 		{
 			tour.add(c);
-			return true;
 		}
 		else
 		{
-			return false;
+			throw new RuntimeException("Customer already present in tour");
 		}
 	}
 	
-	public boolean addCliente(int i, Cliente c)
+	public void addCliente(int i, Cliente c)
 	{
 		if(!tour.contains(c))
 		{
 			tour.set(i,c);
-			return true;
 		}
 		else
 		{
-			return false;
+			throw new RuntimeException("Customer already present in tour");
 		}
+	}
+	
+	public void insertCliente(int i, Cliente c)
+	{
+		tour.add(i,c);
+	}
+	
+	public Cliente removeCliente(int i)
+	{
+		return tour.remove(i);
 	}
 	
 	public Cliente getCliente(int i)

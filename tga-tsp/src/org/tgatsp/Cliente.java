@@ -6,8 +6,9 @@ package org.tgatsp;
 
 public class Cliente
 {
-	Integer id;
-	Coordinates coord;
+	private final Integer id;
+	private final Coordinates coord;
+	public static Cliente[] listaClienti;
 	
 	
 	public Cliente (int id, Coordinates coord)
@@ -34,7 +35,7 @@ public class Cliente
 	
 	public boolean equals(Cliente c)
 	{
-		if (this.id==c.id)
+		if (this.id.equals(c.id))
 			return true;
 		else
 			return false;

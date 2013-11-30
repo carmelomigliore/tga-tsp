@@ -4,12 +4,13 @@ import java.util.Random;
 
 public class Solution{
 	
-	private Tour chromosome;
+	private final Tour chromosome;
 	private Clan clan;
 	private Float fitness;
-	private Float window;
+	private Float window; //used for both parents selection and survival methods
+	private boolean killingFlag;
 	
-	public Solution(Tour t, Clan c, float fitness)
+	public Solution(Tour t, Clan c, Float fitness)
 	{
 		chromosome=t;
 		clan=c;
@@ -21,19 +22,9 @@ public class Solution{
 		return (Tour)chromosome.copy();
 	}
 	
-	public Clan cloneClan()
-	{
-		return (Clan)clan.copy();
-	}
-	
-	public Tour getchromosome()
+	public Tour getChromosome()
 	{
 		return chromosome;
-	}
-	
-	public void setchromosome(Tour t)
-	{
-		this.chromosome=t;
 	}
 	
 	public Clan getClan()
@@ -62,14 +53,24 @@ public class Solution{
 		}
 	}
 	
-	public void setWindow(float window)
+	public void setWindow(Float window)
 	{
 		this.window=window;
 	}
 	
-	public float getWindow()
+	public Float getWindow()
 	{
 		return window;
+	}
+	
+	public void setKillingFlag(boolean flag)
+	{
+		this.killingFlag=flag;
+	}
+	
+	public boolean getKillingFlag()
+	{
+		return killingFlag;
 	}
 	
 	public String toString()
@@ -79,13 +80,30 @@ public class Solution{
 	
 	public void mutate(Random rand)
 	{
-		Tour t = new Tour(chromosome.getSize());
-		int cut = rand.nextInt(chromosome.getSize());
-		
-		for(int j=cut; j<chromosome.getSize(); j++)
+		int customerToDisplace = rand.nextInt(chromosome.getSize());
+		int insertionPosition;
+		do
 		{
+			insertionPosition = rand.nextInt(chromosome.getSize());
 			
+		} while (insertionPosition == customerToDisplace);
+		
+		Cliente c = chromosome.removeCliente(customerToDisplace);
+		chromosome.insertCliente(insertionPosition, c);
+		synchronized(TGA.mutationCount)
+		{
+			TGA.mutationCount++;
+			clan=new Clan(TGA.populationSize+TGA.mutationCount, TGA.tabuCoefficient*TGA.populationSize);
 		}
 	}
+	
+	public boolean equals(Solution s)
+	{
+		if (this.chromosome.equals(s))
+			return true;
+		else
+			return false;
+	}
+	
 
 }
