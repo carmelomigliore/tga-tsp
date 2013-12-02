@@ -1,7 +1,5 @@
 package org.tgatsp;
 
-import Solution;
-import Tour;
 
 import java.util.*;
 

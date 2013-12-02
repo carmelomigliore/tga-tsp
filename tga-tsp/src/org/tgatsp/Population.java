@@ -132,13 +132,13 @@ public class Population {
 		
 	}
 	
-	public static void randomPopulation(int num, Population p)
+	public static void randomPopulation(int startIndex, int num, Population p)
 	{
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
 		Random r = new Random();
 		int rand1;
-		int j=0;
-		while(j<num)
+		int j=startIndex;
+		while(j<num+startIndex)
 		{
 			int k = arrayClienti.size();
 			Tour t = new Tour(arrayClienti.size());
