@@ -54,21 +54,22 @@ public class PMXCrossover implements Callable<Solution[]>{
 		Tour offspring2;
 		Tour offspring1;
 		
+		parents[0]=pop.selectParent(rand);
+		
 		while(counter<deadlockThreshold)
 		{
-				parents[0]=pop.selectParent(rand);
 				do
 				{
 					parents[1]=pop.selectParent(rand);
 				} while(parents[0]==parents[1]);
 			
-				inf=rand.nextInt(parents[0].getChromosome().getSize());
+				inf=rand.nextInt(Cliente.listaClienti.length);
 		
 				//verifica che sup!=inf e che sup e inf non siano contemporaneamente agli estremi
 				do
 				{
-					sup = rand.nextInt(parents[0].getChromosome().getSize());
-				}while(sup==inf || (inf==0 && sup == parents[0].getChromosome().getSize()) || (inf==parents[0].getChromosome().getSize() && sup == 0));
+					sup = rand.nextInt(Cliente.listaClienti.length);
+				}while(sup==inf || (inf==0 && sup == Cliente.listaClienti.length) || (inf==Cliente.listaClienti.length && sup == 0));
 		
 				if (sup<inf)
 				{

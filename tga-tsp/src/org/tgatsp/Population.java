@@ -132,10 +132,9 @@ public class Population {
 		
 	}
 	
-	public static void randomPopulation(int startIndex, int num, Population p)
+	public static void randomPopulation(int startIndex, int num, Population p, Random r)
 	{
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
-		Random r = new Random();
 		int rand1;
 		int j=startIndex;
 		while(j<num+startIndex)
