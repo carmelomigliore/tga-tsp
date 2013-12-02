@@ -103,6 +103,7 @@ public class Cliente
 						//System.out.println(Cliente.listaClienti[i]);		
 					
 				}
+				b.close();
 		}catch(FileNotFoundException e)
 			{
 				e.printStackTrace();
