@@ -100,10 +100,10 @@ public class Population {
 		return ret;
 	}
 	
-	public void survive(Population oldGeneration, Random rand)
+	public void survive(Population newGeneration, Random rand)
 	{
-		this.population.ensureCapacity(oldGeneration.getSize()*2);
-		this.population.addAll(oldGeneration.getSize(), oldGeneration.getPopulation());
+		this.population.ensureCapacity(this.getSize()+newGeneration.getSize());
+		this.population.addAll(this.getSize(), newGeneration.getPopulation());
 		TGA.DuncanMacLeod=calculateFitnessSum(); //We set the new Highlander
 		
 		population.get(0).setWindow((1/population.get(0).getFitness())/sumFitness);
@@ -112,7 +112,7 @@ public class Population {
 			population.get(i).setWindow(population.get(i-1).getWindow()+((1/population.get(i).getFitness())/sumFitness));
 		}
 		
-		int toKill=oldGeneration.getSize();
+		int toKill=TGA.offspringsPerEpoch;
 		float victim;
 		int j;
 		while(toKill>0)
@@ -139,7 +139,7 @@ public class Population {
 			}
 		}
 		population.trimToSize();
-		if(population.size()!=oldGeneration.getSize())
+		if(population.size()!=newGeneration.getSize())
 			throw new RuntimeException("You killed more than expected!");
 		
 	}

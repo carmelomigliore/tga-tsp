@@ -43,8 +43,7 @@ public class Main {
 		Solution s1 = new Solution(prova,null,1/prova.getlength());
 		Solution s2 = new Solution(prova2,null,1/prova2.getlength());
 		
-		//Solution vett[] = s1.PMXCrossover(s2);
-		//System.out.println("Figlio1: "+vett[0].getchromosome() +"\nFiglio2: "+vett[1].getchromosome()+"\n");
+		
 		
 	}
 
