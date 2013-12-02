@@ -1,5 +1,6 @@
 package org.tgatsp;
 
+
 import java.util.*;
 
 public class Population {
@@ -129,6 +130,32 @@ public class Population {
 		if(population.size()!=newGeneration.getSize())
 			throw new RuntimeException("You killed more than expected!");
 		
+	}
+	
+	public static void randomPopulation(int num, Population p)
+	{
+		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
+		Random r = new Random();
+		int rand1;
+		int j=0;
+		while(j<num)
+		{
+			int k = arrayClienti.size();
+			Tour t = new Tour(arrayClienti.size());
+			ArrayList<Cliente> temp = new ArrayList<Cliente> (arrayClienti);
+			for(int i =0; i<arrayClienti.size(); i++)
+			{
+			   	rand1 = r.nextInt(k);
+			   	t.addCliente(i, temp.remove(rand1));
+			   	k--;
+			}
+			Clan c = new Clan(j,TGA.tabuCoefficient*TGA.populationSize);
+			Solution s = new Solution(t,c,null);
+			System.out.println(s.toString());
+			p.addSolution(s);
+			j++;
+			
+		}
 	}
 	
 	
