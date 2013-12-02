@@ -148,7 +148,7 @@ public class Population {
 			   	t.addCliente(i, temp.remove(rand1));
 			   	k--;
 			}
-			Clan c = new Clan(j,TGA.tabuCoefficient*TGA.populationSize);
+			Clan c = new Clan(j,TGA.tabuSize);
 			Solution s = new Solution(t,c,null);
 			System.out.println(s.toString());
 			p.addSolution(s);
@@ -163,11 +163,11 @@ public class Population {
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
 		int rand1;
 		int j=startIndex;
+		ArrayList<Cliente> temp= new ArrayList<Cliente> (arrayClienti);
 		while(j<(num+j))
 		{
 			int k = arrayClienti.size();
 			Tour t = new Tour(arrayClienti.size());
-			ArrayList<Cliente> temp = new ArrayList<Cliente> (arrayClienti);
 			rand1 = r.nextInt(k);
 			float tmp = 0;
 			int q;
@@ -197,7 +197,7 @@ public class Population {
 				temp.remove(q);
 			//	System.out.println(t.toString());
 			}
-			Clan c = new Clan(j,TGA.tabuCoefficient*TGA.populationSize);
+			Clan c = new Clan(j,TGA.tabuSize);
 	                //Solution s = new Solution(t,c,null);
 			//System.out.println(s.toString());
 			//p.addSolution(s);

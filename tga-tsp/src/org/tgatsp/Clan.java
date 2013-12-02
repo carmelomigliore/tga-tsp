@@ -26,7 +26,7 @@ public class Clan {
 		this.tabu=tabu;
 	}
 	
-	public synchronized Clan copy()
+	public Clan copy()
 	{
 		LinkedBlockingQueue<Integer> temp = new LinkedBlockingQueue<Integer>(tabu.size()+tabu.remainingCapacity());
 		for (Iterator<Integer> it=tabu.iterator(); it.hasNext();)
@@ -52,7 +52,7 @@ public class Clan {
 	//	return tabu;
 	//}
 	
-	public synchronized boolean isTabu (Integer clan)
+	public boolean isTabu (Integer clan)
 	{
 		if (tabu.contains(clan))
 			return true;
@@ -60,7 +60,7 @@ public class Clan {
 			return false;
 	}
 	
-	public synchronized void addTabu(Integer clan)
+	public void addTabu(Integer clan)
 	{
 		while(!tabu.offer(clan))
 		{

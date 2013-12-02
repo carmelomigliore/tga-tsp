@@ -1,40 +1,32 @@
 package org.tgatsp;
 
 import java.util.HashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
-public class PMXCrossover implements Callable<Solution[]>{
+public class PMXCrossover{
 
 	private Population pop;
-	private final ExecutorService pool;
-	private ThreadLocalRandom rand;
+	//private final ExecutorService pool;
+	private Random rand;
 	private final int deadlockThreshold;
 	private final Solution[] parents;
 	private final Solution ret[];
-	private final Offspring off[];
 	
-	public PMXCrossover(Population pop, ExecutorService pool, int deadlockThreshold)
+	public PMXCrossover(Population pop, int deadlockThreshold)
 	{
 		this.pop=pop;
-		this.pool=pool;
+		//this.pool=pool;
 		this.deadlockThreshold=deadlockThreshold;
 		this.parents= new Solution[2];
 		this.ret= new Solution[2];
-		this.off= new Offspring[2];
 	}
 	
-	public PMXCrossover(ExecutorService pool, int deadlockThreshold)
+	public PMXCrossover(int deadlockThreshold, Random rand)
 	{
-		this.pool=pool;
+		this.rand=rand;
 		this.deadlockThreshold=deadlockThreshold;
 		this.parents= new Solution[2];
 		this.ret= new Solution[2];
-		this.off= new Offspring[2];
-		this.off[0]= new Offspring();
-		this.off[1]= new Offspring();
 	}
 	
 	public void setPopulation(Population pop)
@@ -45,11 +37,9 @@ public class PMXCrossover implements Callable<Solution[]>{
 	
 	public Solution[] call()
 	{
-		this.rand=ThreadLocalRandom.current();
 		int inf; 
 		int sup;
 		int temp;
-		Future<Tour> res;
 		int counter=0;
 		Tour offspring2;
 		Tour offspring1;
@@ -78,21 +68,8 @@ public class PMXCrossover implements Callable<Solution[]>{
 					sup = temp;
 				}
 		
-				off[0].init(parents[0].getChromosome(), parents[1].getChromosome(), inf, sup);
-				off[1].init(parents[1].getChromosome(), parents[0].getChromosome(), inf, sup);
-				res= pool.submit(off[0]);
-		
-				offspring2= off[1].call();
-				offspring1=null;
-			
-				try
-				{
-					offspring1= res.get();
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
+				offspring1= offspring(parents[0].getChromosome(), parents[1].getChromosome(), inf, sup);
+				offspring2= offspring(parents[1].getChromosome(), parents[0].getChromosome(), inf, sup);
 		
 				ret[0]=new Solution(offspring1,null, 1/offspring1.getlength());
 				ret[1]=new Solution(offspring2,null, 1/offspring2.getlength());
@@ -122,88 +99,56 @@ public class PMXCrossover implements Callable<Solution[]>{
 				counter++;
 		}
 		
-		Runnable r = new Runnable(){
-			public void run()
-			{
-				ret[0].mutate(rand);
-			}
-		};
-		Future<?> f = pool.submit(r);
+		ret[0].mutate(rand);
 		ret[1].mutate(rand);
-		try
-		{
-			f.get();
-		} catch (Exception e) {e.printStackTrace();}
-		
 		return ret;
 		
 	}
 	
-	private class Offspring implements Callable<Tour>
+		
+	public Tour offspring(Tour parent1, Tour parent2, int inf, int sup)
 	{
-		private Tour parent1; //ricordarsi di invertire i genitori chiamando i thread
-		private Tour parent2;
-		private int inf;
-		private int sup;
-		
-		public Offspring()
+		Tour temp = new Tour(parent1.getSize());
+		for(int i=inf; i<sup; i++)
 		{
-			
+			temp.addCliente(i,parent1.getCliente(i));
 		}
 		
-		public void init(Tour parent1, Tour parent2, int inf, int sup)
+		HashMap<Cliente,Cliente> crossmap = new HashMap<Cliente,Cliente>(sup-inf);
+		for(int j=inf; j<sup; j++)
 		{
-			this.parent1=parent1;
-			this.parent2=parent2;
-			this.inf=inf;
-			this.sup=sup;
+			crossmap.put(parent1.getCliente(j), parent2.getCliente(j));
 		}
-		
-		public Tour call()
-		{ 	
-			Tour temp = new Tour(parent1.getSize());
-			for(int i=inf; i<sup; i++)
-			{
-				temp.addCliente(i,parent1.getCliente(i));
-			}
 			
-			HashMap<Cliente,Cliente> crossmap = new HashMap<Cliente,Cliente>(sup-inf);
-			for(int j=inf; j<sup; j++)
-			{
-				crossmap.put(parent1.getCliente(j), parent2.getCliente(j));
-			}
-			
-			Cliente c;
+		Cliente c;
 			
 			/*
 			 * ciclo for del secondo cutting point
 			 */
-			for(int k=sup; k<parent1.getSize(); k++) 
+		for(int k=sup; k<parent1.getSize(); k++) 
+		{
+			c=parent2.getCliente(k);
+			while((crossmap.get((c))!=null))	
 			{
-				c=parent2.getCliente(k);
-				while((crossmap.get((c))!=null))	
-				{
-					c=crossmap.get(c);
-				}
-				temp.addCliente(k, c);
+				c=crossmap.get(c);
 			}
+			temp.addCliente(k, c);
+		}
 			
 			/*
 			 * ciclo for del primo cutting point
 			 */
-			for(int k=0; k<inf; k++)
+		for(int k=0; k<inf; k++)
+		{
+			c=parent2.getCliente(k);
+			while((crossmap.get(c)!=null))
 			{
-				c=parent2.getCliente(k);
-				while((crossmap.get(c)!=null))
-				{
-					c=crossmap.get(c);
-				}
-				temp.addCliente(k, c);
+				c=crossmap.get(c);
 			}
+			temp.addCliente(k, c);
+		}
 			return temp;		
-		}	
-		
-	}
-	
+	}		
 }
+	
 

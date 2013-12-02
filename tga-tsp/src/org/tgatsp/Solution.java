@@ -90,7 +90,7 @@ public class Solution{
 		
 		Cliente c = chromosome.removeCliente(customerToDisplace);
 		chromosome.insertCliente(insertionPosition, c);
-		clan=new Clan(TGA.populationSize+TGA.mutationCount.incrementAndGet(), TGA.tabuCoefficient*TGA.populationSize);
+		clan=new Clan(TGA.populationSize+TGA.mutationCount.incrementAndGet(), TGA.tabuSize);
 	}
 	
 	public boolean equals(Solution s)
