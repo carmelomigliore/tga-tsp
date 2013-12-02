@@ -1,5 +1,8 @@
 package org.tgatsp;
 
+import Solution;
+import Tour;
+
 import java.util.*;
 
 public class Tour
@@ -127,6 +130,44 @@ public class Tour
 	public String toString()
 	{
 		return tour.toString();
+	}
+	
+	
+	public void twoOpt(Random r)
+	{
+		int dim = this.getSize();
+		int inf = r.nextInt(dim);
+		int sup;
+		int temp;
+		do
+		{
+			sup= r.nextInt(dim);
+			if(inf>sup)
+			{
+			  temp = inf;
+			  inf = sup;
+			  sup = temp;
+			}
+			
+		}while(inf == sup);
+		
+		for(int j = 0; j<= inf-1; j++)
+		{
+			this.addCliente(j, this.getCliente(j));
+		}
+		temp = sup;
+		
+		for(int j=inf; j<=sup; j++)
+		{
+			this.addCliente(j,this.getCliente(temp));
+			temp--;
+		}
+
+		for(int j=sup+1; j<dim; j++)
+		{
+			this.addCliente(j, this.getCliente(j));
+		}
+				
 	}
 	
 
