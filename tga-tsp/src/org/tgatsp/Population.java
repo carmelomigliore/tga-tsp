@@ -75,29 +75,16 @@ public class Population {
 		}
 	}
 	
-	public Solution[] selectParents(Random rand)
+	public Solution selectParent(Random rand)
 	{
 		Float random=rand.nextFloat();
 		int i;
-		Solution[] ret= new Solution[2];
 		for(i=0; i<population.size(); i++)
 		{
 			if(population.get(i).getWindow()>random)
 				break;
 		}
-		ret[0]=population.get(i);
-		
-		do
-		{
-			random=rand.nextFloat();
-			for(i=0; i<population.size(); i++)
-			{
-				if(population.get(i).getWindow()>random)
-					break;
-			}
-		} while(population.get(i)==ret[0]);
-		ret[1]=population.get(i);
-		return ret;
+		return population.get(i);
 	}
 	
 	public void survive(Population newGeneration, Random rand)

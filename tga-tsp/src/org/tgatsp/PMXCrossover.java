@@ -12,6 +12,7 @@ public class PMXCrossover implements Callable<Solution[]>{
 	private final ExecutorService pool;
 	private ThreadLocalRandom rand;
 	private final int deadlockThreshold;
+	private final Solution[] parents;
 	private final Solution ret[];
 	private final Offspring off[];
 	
@@ -20,6 +21,7 @@ public class PMXCrossover implements Callable<Solution[]>{
 		this.pop=pop;
 		this.pool=pool;
 		this.deadlockThreshold=deadlockThreshold;
+		this.parents= new Solution[2];
 		this.ret= new Solution[2];
 		this.off= new Offspring[2];
 	}
@@ -28,6 +30,7 @@ public class PMXCrossover implements Callable<Solution[]>{
 	{
 		this.pool=pool;
 		this.deadlockThreshold=deadlockThreshold;
+		this.parents= new Solution[2];
 		this.ret= new Solution[2];
 		this.off= new Offspring[2];
 		this.off[0]= new Offspring();
@@ -46,7 +49,6 @@ public class PMXCrossover implements Callable<Solution[]>{
 		int inf; 
 		int sup;
 		int temp;
-		Solution[] parents;
 		Future<Tour> res;
 		int counter=0;
 		Tour offspring2;
@@ -54,7 +56,11 @@ public class PMXCrossover implements Callable<Solution[]>{
 		
 		while(counter<deadlockThreshold)
 		{
-				parents=pop.selectParents(rand);
+				parents[0]=pop.selectParent(rand);
+				do
+				{
+					parents[1]=pop.selectParent(rand);
+				} while(parents[0]==parents[1]);
 			
 				inf=rand.nextInt(parents[0].getChromosome().getSize());
 		
