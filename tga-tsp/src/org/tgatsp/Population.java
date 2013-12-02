@@ -158,5 +158,52 @@ public class Population {
 	}
 	
 	
-	
+	public static void nearestNeighbour(Population p,int startIndex, int num, Random r)
+	{
+		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
+		int rand1;
+		int j=startIndex;
+		while(j<(num+j))
+		{
+			int k = arrayClienti.size();
+			Tour t = new Tour(arrayClienti.size());
+			ArrayList<Cliente> temp = new ArrayList<Cliente> (arrayClienti);
+			rand1 = r.nextInt(k);
+			float tmp = 0;
+			int q;
+			int count = 1;
+		   	t.addCliente(0, temp.remove(rand1));
+			for(int i =0; i<arrayClienti.size()-1; i++)
+			{
+				Cliente ctmp;
+				//System.out.println("Nodo:"+ctmp.toString());
+				tmp=t.getCliente(i).calculateDistance(temp.get(0));
+				ctmp = temp.get(0);
+				q = 0;
+				for(int l =1; l<temp.size(); l++)
+				{
+					float d= t.getCliente(i).calculateDistance(temp.get(l));
+					if(d < tmp)
+					{
+						tmp = d;
+						ctmp= temp.get(l);
+						q = l;
+					}
+				}
+				
+			//	System.out.println(t.toString());
+				t.addCliente(count,ctmp);
+				count++;
+				temp.remove(q);
+			//	System.out.println(t.toString());
+			}
+			Clan c = new Clan(j,TGA.tabuCoefficient*TGA.populationSize);
+	                //Solution s = new Solution(t,c,null);
+			//System.out.println(s.toString());
+			//p.addSolution(s);
+			Solution s=new Solution(t,c,null);
+			p.addSolution(s);
+			j++;
+		}	
+	}	
 }
