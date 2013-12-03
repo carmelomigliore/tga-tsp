@@ -1,6 +1,9 @@
 package org.tgatsp;
 
 
+import Tour;
+import twopt;
+
 import java.util.*;
 
 public class Tour
@@ -117,6 +120,11 @@ public class Tour
 		return tour;
 	}
 	
+	public void markToRecalculate()
+	{
+		this.length = null;
+	}
+	
 	@Override
 	public boolean equals(Object s)
 	{
@@ -143,40 +151,54 @@ public class Tour
 		return tour.toString();
 	}
 	
-	
-	public static void twoOpt(Tour t, Random r)
+	public static void localSearch(Tour t)
 	{
 		int dim = t.getSize();
-		int inf = r.nextInt(dim);
-		int sup;
-		int temp;
-		do
+	//	int rand = r.nextInt(dim/10);
+		for(int i = 0; i < dim - 1; i++)
 		{
-			sup= r.nextInt(dim);
-			if(inf>sup)
+			for(int k = i + 1; k < dim; k++)
 			{
-			  temp = inf;
-			  inf = sup;
-			  sup = temp;
+				Tour.twoOpt(t, i, k);
 			}
-			
-		}while(inf == sup);
-		
-		temp = sup;
-		Tour temporaneo = new Tour(sup-inf+1);
-		for(int j=inf; j<=sup; j++)
-		{
-			temporaneo.addCliente(j-inf, t.getCliente(temp));
-			temp--;
 		}
 		
-		for(int k=inf; k<=sup; k++)
+	}
+		
+	public static void twoOpt(Tour t, int inf, int sup)
+	{
+
+		float len_prec = t.getlength();
+		Tour temporaneo = new Tour(t.getSize());
+		int counter = 0;
+		
+		
+			for(int i =0; i<inf; i++)
+			{
+				temporaneo.setCliente(i, t.getCliente(i));
+			}
+		
+			for(int j=0; j<sup-inf; j++)
+				{
+				temporaneo.setCliente(j+inf, t.getCliente(sup-j-1));
+				}
+		
+			for(int k=sup; k<t.getSize(); k++)
+			{
+				temporaneo.setCliente(k, t.getCliente(k));
+			}
+			counter++;
+		
+		
+		if(temporaneo.getlength() < len_prec)
 		{
-			
-			t.setCliente(k, temporaneo.getCliente(k-inf));
+			for(int k = inf; k<sup; k++)
+			{
+				t.setCliente(k,temporaneo.getCliente(k));
+			}
+			t.markToRecalculate();
+			//twopt.twoOptc(t, r);
 		}
-	System.out.println(t);
-	System.out.println("ciao"+t.getSize());
 				
 	}
 	
