@@ -251,7 +251,7 @@ public class Population {
 	}
 	
 	
-	public static void nearestNeighbour(Population p,int startIndex, int num, Random r)
+	/*public static void nearestNeighbour(Population p,int startIndex, int num, Random r)
 	{
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
 		int rand1;
@@ -300,5 +300,61 @@ public class Population {
 			j++;
 			temp.clear();
 		}	
-	}	
+	}*/	
+	
+	
+	public static void nearestNeighbour(Population p,int startIndex)
+	{
+		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
+		int j=startIndex;
+		int index=0;
+		ArrayList<Cliente> temp=new ArrayList<Cliente> ();
+		while(j<Cliente.listaClienti.length+startIndex)
+		{
+			temp.ensureCapacity(arrayClienti.size());
+			temp.addAll(arrayClienti);
+			Tour t = new Tour(arrayClienti.size());
+			float tmp = 0;
+		   	t.addCliente(0, temp.remove(index));
+		   //	System.out.println(t+"\n"+temp);
+			for(int i =0; i<arrayClienti.size()-1; i++)
+			{
+				Cliente ctmp;
+				//System.out.println("Nodo:"+ctmp.toString());
+				tmp=t.getCliente(i).calculateDistance(temp.get(0));
+				ctmp = temp.get(0);
+				float current;
+				for(int l =1; l<temp.size(); l++)
+				{
+					current= t.getCliente(i).calculateDistance(temp.get(l));
+					if(current < tmp)
+					{
+						tmp = current;
+						ctmp= temp.get(l);
+					}
+				}
+				
+			//	System.out.println(t.toString());
+				//System.out.println(temp+"\n"+ctmp);
+				t.addCliente(i+1,ctmp);
+				temp.remove(ctmp);
+			//	System.out.println(t.toString());
+			}
+			Clan c = new Clan(j,TGA.tabuSize);
+	                //Solution s = new Solution(t,c,null);
+			//System.out.println(s.toString());
+			//p.addSolution(s);
+			Solution s=new Solution(t,c,null);
+			//System.out.println(s);
+			p.addSolution(s);
+			j++;
+			index++;
+			temp.clear();
+		}
+		Tour t = new Tour(arrayClienti.size());
+		t.getTour().addAll(Arrays.asList(Cliente.listaClienti));
+		Clan c = new Clan(j+1,TGA.tabuSize);
+		Solution sol=new Solution(t,c,null);
+		p.addSolution(sol);
+	}
 }
