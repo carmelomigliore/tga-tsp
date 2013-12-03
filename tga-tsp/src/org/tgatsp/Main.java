@@ -1,50 +1,31 @@
 package org.tgatsp;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		Tour prova = new Tour(15);
-		Tour prova2= new Tour(15);
-		Random rand = new Random();
-		Coordinates coord;
-		ArrayList<Integer> serie= new ArrayList<Integer>();
-		
-		int j=0;
-		Integer temp;
-		while(serie.size()<15)
-		{
-			temp = rand.nextInt(15);
-			if (!serie.contains(temp))
-			{
-				serie.add(j,temp);
-				j++;
-			}
+		final int populationSize=2000;
+		final int maxEpoch=1000;
+		final int deadlockThreshold=1000;
+		final float tabuCoefficient=0.4F;
+		Population pop= new Population(populationSize);
+		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,tabuCoefficient);
+		Cliente.init(args[0]);
+		Random rand= new Random();
+		Population.randomPopulation(0, 500, pop, rand);
+		Population.nearestNeighbour(pop, 500, 1500, rand);
+		//Population.randomPopulation2Opt(0, 1500, pop, rand);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		System.out.println("Serie: "+serie+"\n");
-		Cliente c;
-		for(int i=0; i<15; i++)
-		{
-			
-			coord=new Coordinates(rand.nextFloat()*i+2, rand.nextFloat()*i*i);
-			c=new Cliente(i,coord);
-			prova.addCliente(i,c);
-			prova2.addCliente(serie.get(i),c);
+		algorithm.startEngine();
 		}
-		
-		
-		System.out.println("prova1: "+prova+"\n");
-		System.out.println("prova2: "+prova2+"\n");
-		
-		Solution s1 = new Solution(prova,null,1/prova.getlength());
-		Solution s2 = new Solution(prova2,null,1/prova2.getlength());
-		
 		
 		
 	}
 
-}

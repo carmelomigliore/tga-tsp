@@ -26,6 +26,11 @@ public class Clan {
 		this.tabu=tabu;
 	}
 	
+	public LinkedBlockingQueue<Integer> getTabu()
+	{
+		return tabu;
+	}
+	
 	public Clan copy()
 	{
 		LinkedBlockingQueue<Integer> temp = new LinkedBlockingQueue<Integer>(tabu.size()+tabu.remainingCapacity());

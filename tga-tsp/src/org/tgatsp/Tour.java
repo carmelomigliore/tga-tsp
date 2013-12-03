@@ -23,7 +23,7 @@ public class Tour
 	
 	public Tour (Tour t)
 	{
-		this.tour=t.tour;
+		this.tour=new ArrayList<Cliente>(t.getTour());
 		this.length=t.length;
 	}
 	
@@ -60,6 +60,11 @@ public class Tour
 		{
 			throw new RuntimeException("Customer already present in tour");
 		}
+	}
+	
+	public void setCliente(int i, Cliente c)
+	{
+		tour.set(i,c);
 	}
 	
 	public void insertCliente(int i, Cliente c)
@@ -112,12 +117,20 @@ public class Tour
 		return tour;
 	}
 	
-	public boolean equals(Tour t)
+	@Override
+	public boolean equals(Object s)
 	{
-		if (tour.equals(t.getTour()))
+		if (this.tour.equals(s))
 			return true;
 		else
 			return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 53 * hash + (this.tour != null ? this.tour.hashCode() : 0);
+	    return hash;
 	}
 	
 	public int getSize()
@@ -131,9 +144,9 @@ public class Tour
 	}
 	
 	
-	public void twoOpt(Random r)
+	public static void twoOpt(Tour t, Random r)
 	{
-		int dim = this.getSize();
+		int dim = t.getSize();
 		int inf = r.nextInt(dim);
 		int sup;
 		int temp;
@@ -149,22 +162,21 @@ public class Tour
 			
 		}while(inf == sup);
 		
-		for(int j = 0; j<= inf-1; j++)
-		{
-			this.addCliente(j, this.getCliente(j));
-		}
 		temp = sup;
-		
+		Tour temporaneo = new Tour(sup-inf+1);
 		for(int j=inf; j<=sup; j++)
 		{
-			this.addCliente(j,this.getCliente(temp));
+			temporaneo.addCliente(j-inf, t.getCliente(temp));
 			temp--;
 		}
-
-		for(int j=sup+1; j<dim; j++)
+		
+		for(int k=inf; k<=sup; k++)
 		{
-			this.addCliente(j, this.getCliente(j));
+			
+			t.setCliente(k, temporaneo.getCliente(k-inf));
 		}
+	System.out.println(t);
+	System.out.println("ciao"+t.getSize());
 				
 	}
 	

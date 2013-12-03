@@ -12,15 +12,6 @@ public class PMXCrossover{
 	private final Solution[] parents;
 	private final Solution ret[];
 	
-	public PMXCrossover(Population pop, int deadlockThreshold)
-	{
-		this.pop=pop;
-		//this.pool=pool;
-		this.deadlockThreshold=deadlockThreshold;
-		this.parents= new Solution[2];
-		this.ret= new Solution[2];
-	}
-	
 	public PMXCrossover(int deadlockThreshold, Random rand)
 	{
 		this.rand=rand;
@@ -78,7 +69,7 @@ public class PMXCrossover{
 				//controllo tabu
 				Integer idclan0=parents[0].getClan().getId();
 				Integer idclan1=parents[1].getClan().getId();
-				if(!((parents[0].getClan().isTabu(idclan1))) || (parents[1].getClan().isTabu(idclan0)))
+				if(!(((parents[0].getClan().isTabu(idclan1))) || (parents[1].getClan().isTabu(idclan0))))
 				{
 					parents[0].getClan().addTabu(idclan1);
 					ret[0].setClan(parents[0].getClan().copy());
@@ -88,14 +79,16 @@ public class PMXCrossover{
 				}
 				//else
 				//aspiration criteria
-				if(ret[0].getFitness()>TGA.DuncanMacLeod.getFitness() || ret[1].getFitness()>TGA.DuncanMacLeod.getFitness())
-				{
-					parents[0].getClan().addTabu(idclan1);
-					ret[0].setClan(parents[0].getClan().copy());
-					parents[1].getClan().addTabu(idclan0);
-					ret[1].setClan(parents[1].getClan().copy());
-					return ret;
-				}
+					if(ret[0].getFitness()>TGA.DuncanMacLeod.getFitness() || ret[1].getFitness()>TGA.DuncanMacLeod.getFitness())
+					{
+					
+						parents[0].getClan().addTabu(idclan1);
+						ret[0].setClan(parents[0].getClan().copy());
+						parents[1].getClan().addTabu(idclan0);
+						ret[1].setClan(parents[1].getClan().copy());
+						TGA.tabuCount.incrementAndGet();
+						return ret;
+					}
 				counter++;
 		}
 		
@@ -106,7 +99,7 @@ public class PMXCrossover{
 	}
 	
 		
-	public Tour offspring(Tour parent1, Tour parent2, int inf, int sup)
+	public static Tour offspring(Tour parent1, Tour parent2, int inf, int sup)
 	{
 		Tour temp = new Tour(parent1.getSize());
 		for(int i=inf; i<sup; i++)
@@ -125,6 +118,7 @@ public class PMXCrossover{
 			/*
 			 * ciclo for del secondo cutting point
 			 */
+		//System.out.println("1) "+parent1+"\n2)"+parent2);
 		for(int k=sup; k<parent1.getSize(); k++) 
 		{
 			c=parent2.getCliente(k);

@@ -1,6 +1,7 @@
 package org.tgatsp;
 
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TGA {
@@ -10,7 +11,11 @@ public class TGA {
 	//private ExecutorService pool;
 	//private ExecutorService secondPool;
 	public static Solution DuncanMacLeod; //Global Maximum - The Immortal
+	//public static Solution ConnorMacLeod; //The old Highlander
+	//public final static LinkedBlockingQueue<Solution> highlanders = new LinkedBlockingQueue<Solution>(10);
 	public static AtomicInteger mutationCount;
+	public static AtomicInteger tabuCount;
+	public static AtomicInteger localOptimumBuster;
 	private int currentEpoch;
 	private Population currentPopulation;
 	private Population sons;
@@ -22,14 +27,17 @@ public class TGA {
 	public static int offspringsPerEpoch;
 	private int deadlockThreshold;
 	
-	public TGA (int populationSize, int maxEpoch, int deadlockThreshold, int tabuCoefficient, int threadPoolSize)
+	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, float tabuCoefficient)
 	{
 		TGA.populationSize=populationSize;
 		TGA.mutationCount=new AtomicInteger();
 		TGA.tabuCoefficient=tabuCoefficient;
 		TGA.tabuSize=(int)(TGA.tabuCoefficient*TGA.populationSize);
+		TGA.tabuCount=new AtomicInteger();
+		TGA.localOptimumBuster=new AtomicInteger();
 		//this.pool=Executors.newFixedThreadPool(threadPoolSize); 
 		//this.secondPool=Executors.newCachedThreadPool();
+		this.currentPopulation=p;
 		this.currentEpoch=0;
 		this.maxEpoch=maxEpoch;
 		this.deadlockThreshold=deadlockThreshold;
@@ -42,29 +50,34 @@ public class TGA {
 	{
 		final PMXCrossover[] cross= new PMXCrossover[offspringsPerEpoch/2];
 		sons=new Population(populationSize);
+		Solution[] figli;
 		
 		//inizializzo i vettori
 		for(int j=0; j<offspringsPerEpoch/2; j++)
 		{
-			cross[j]=new PMXCrossover(deadlockThreshold, rand);		}
+			cross[j]=new PMXCrossover(deadlockThreshold, rand);		
+		}
 		
 		while(currentEpoch<maxEpoch)
 		{
 			currentPopulation.evaluate();
+			//if(currentEpoch==0)
+			//	TGA.ConnorMacLeod=TGA.DuncanMacLeod;
 			
 			for (int i=0; i<offspringsPerEpoch/2; i++)
 			{
 				cross[i].setPopulation(currentPopulation);
-				sons.addSolution(cross[i].call()[0]);
-				sons.addSolution(cross[i].call()[1]);
+				figli=cross[i].call();
+				sons.addSolution(figli[0]);
+				sons.addSolution(figli[1]);
 			}	
-			currentPopulation.survive(sons, rand);	
+			currentPopulation.survive(sons, rand);
+			sons.getPopulation().clear();
+			System.out.println("\nEpoch:"+currentEpoch+"\nHighlander:\n"+TGA.DuncanMacLeod);
 			currentEpoch++;
 		}
+		//System.out.println("\nGlobal optimum:"+TGA.DuncanMacLeod+"Mutation: "+mutationCount+" Tabu: "+tabuCount);
 		
 	}
-	
-	
-	
 
 }

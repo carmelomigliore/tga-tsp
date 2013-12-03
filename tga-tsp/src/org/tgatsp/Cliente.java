@@ -34,18 +34,26 @@ public class Cliente
 		return coord;
 	}
 	
-	public int getId()
+	public Integer getId()
 	{
 		return id;
 	}
 	
-	public boolean equals(Cliente c)
+	@Override
+	public boolean equals(Object s)
 	{
-		if (this.id.equals(c.id))
-			return true;
-		else
+		Cliente c = (Cliente)s;
+		if (c==null || this.id.intValue()!=c.getId().intValue())
 			return false;
-		
+		else
+			return true;
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 53 * hash + (this.id != null ? this.id.hashCode() : 0);
+	    return hash;
 	}
 	
 	public String toString()
@@ -95,13 +103,12 @@ public class Cliente
 				{					
 					str=b.readLine();
 					str_arr= str.split(" ");
-					cr=new Coordinates(Float.parseFloat(str_arr[2]),Float.parseFloat(str_arr[3]));
+					cr=new Coordinates(Float.parseFloat(str_arr[1]),Float.parseFloat(str_arr[2]));
 					
-						int k= Integer.parseInt(str_arr[1]);
-						c=new Cliente(k,cr);
-						Cliente.listaClienti[i]=c;
-						//System.out.println(Cliente.listaClienti[i]);		
-					
+					int k= Integer.parseInt(str_arr[0]);
+					c=new Cliente(k,cr);
+					Cliente.listaClienti[i]=c;
+					//System.out.println(Cliente.listaClienti[i]);			
 				}
 				b.close();
 		}catch(FileNotFoundException e)

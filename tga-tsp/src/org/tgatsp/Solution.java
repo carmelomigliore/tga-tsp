@@ -1,5 +1,7 @@
 package org.tgatsp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Solution{
@@ -75,11 +77,30 @@ public class Solution{
 	
 	public String toString()
 	{
-		return chromosome.toString() + "|" + clan.toString() + " Fitness: "+fitness + "\n";
+		//return chromosome.toString() + "|" + clan.toString() + " Fitness: "+fitness + "\n";
+		
+		return "\nLenght: "+chromosome.getlength()+" Fitness: "+fitness+" Window: "+window;
+	}
+	
+	public static Solution randomOffspring(Random rand)
+	{
+		Tour t = new Tour(Cliente.listaClienti.length);
+		ArrayList<Cliente> temp = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
+		int k=Cliente.listaClienti.length;
+		int rand1;
+		for(int i =0; i<Cliente.listaClienti.length; i++)
+		{
+		   	rand1 = rand.nextInt(k);
+		   	t.addCliente(i, temp.remove(rand1));
+		   	k--;
+		}
+		Clan c = new Clan(TGA.populationSize+TGA.mutationCount.incrementAndGet(),TGA.tabuSize);
+		return new Solution(t,c,null);
 	}
 	
 	public void mutate(Random rand)
 	{
+		
 		int customerToDisplace = rand.nextInt(chromosome.getSize());
 		int insertionPosition;
 		do
@@ -87,18 +108,29 @@ public class Solution{
 			insertionPosition = rand.nextInt(chromosome.getSize());
 			
 		} while (insertionPosition == customerToDisplace);
-		
+		//System.out.println(chromosome);
 		Cliente c = chromosome.removeCliente(customerToDisplace);
 		chromosome.insertCliente(insertionPosition, c);
+		//System.out.println(chromosome);
 		clan=new Clan(TGA.populationSize+TGA.mutationCount.incrementAndGet(), TGA.tabuSize);
+		
+		
+		
 	}
-	
-	public boolean equals(Solution s)
+	@Override
+	public boolean equals(Object s)
 	{
-		if (this.chromosome.equals(s))
+		if (this==s || this.chromosome.equals(s))
 			return true;
 		else
 			return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 53 * hash + (this.chromosome != null ? this.chromosome.hashCode() : 0);
+	    return 0;
 	}
 	
 
