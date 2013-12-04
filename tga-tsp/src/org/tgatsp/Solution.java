@@ -50,7 +50,7 @@ public class Solution{
 			return fitness;
 		else
 		{
-			fitness=1/chromosome.getlength();
+			fitness=1/(float)chromosome.getlength();
 			return fitness;
 		}
 	}

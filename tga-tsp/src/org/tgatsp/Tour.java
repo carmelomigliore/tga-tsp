@@ -6,7 +6,7 @@ import java.util.*;
 public class Tour
 {
 	private final ArrayList<Cliente> tour;
-	private Float length;
+	private Integer length;
 	
 	
 	public Tour (int size)
@@ -15,7 +15,7 @@ public class Tour
 		while(tour.size() < size) tour.add(null);
 	}
 	
-	public Tour (ArrayList<Cliente> t, Float length)
+	public Tour (ArrayList<Cliente> t, Integer length)
 	{
 		this.tour=t;
 		this.length=length;
@@ -84,17 +84,17 @@ public class Tour
 	
 	private void calculatelength()
 	{
-		float temp =0;
+		int temp =0;
 		int i;
 		for(i=1; i<tour.size(); i++)
 		{
 			temp+=tour.get(i).calculateDistance(tour.get(i-1));    // Distance between i and i-1
 		}
 		temp+=tour.get(i-1).calculateDistance(tour.get(0)); //Distanza tra l'ultimo ed il primo
-		length= new Float(temp);	
+		length= new Integer(temp);	
 	}
 	
-	public Float getlength()
+	public Integer getlength()
 	{
 		if (length!=null)
 		{
@@ -107,7 +107,7 @@ public class Tour
 		}
 	}
 	
-	public void setFitness(float length)
+	public void setFitness(Integer length)
 	{
 		this.length=length;
 	}
@@ -163,7 +163,7 @@ public class Tour
 	public static void twoOpt(Tour t, int inf, int sup)
 	{
 
-		Float len_prec = t.getlength();
+		Integer len_prec = t.getlength();
 		Tour temporaneo = new Tour(t.getSize());
 		//int counter = 0;
 		

@@ -62,8 +62,8 @@ public class PMXCrossover{
 				offspring1= offspring(parents[0].getChromosome(), parents[1].getChromosome(), inf, sup);
 				offspring2= offspring(parents[1].getChromosome(), parents[0].getChromosome(), inf, sup);
 		
-				ret[0]=new Solution(offspring1,null, 1/offspring1.getlength());
-				ret[1]=new Solution(offspring2,null, 1/offspring2.getlength());
+				ret[0]=new Solution(offspring1,null, 1/(float)offspring1.getlength());
+				ret[1]=new Solution(offspring2,null, 1/(float)offspring2.getlength());
 				//Tour.localSearch(ret[0].getChromosome());
 				//TODO provare pure ad applicare 2-opt (specialmente se la convergenza è lenta)
 			

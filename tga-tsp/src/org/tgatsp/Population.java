@@ -270,7 +270,7 @@ public class Population {
 			Clan c = new Clan(j,TGA.tabuSize);
 			Tour.localSearch(t);
 			//System.out.println("\n"+t.getlength());
-			Solution s = new Solution(t,c,1/t.getlength());
+			Solution s = new Solution(t,c,1/(float)t.getlength());
 			//System.out.println(s);
 			p.addSolution(s);
 			j++;

@@ -23,10 +23,10 @@ public class Cliente
 		this.coord = coord;
 	}
 	
-	public float calculateDistance (Cliente target)
+	public int calculateDistance (Cliente target)
 	{
 		Coordinates targetCoord = target.getCoordinates();
-		return (float)Math.sqrt(Math.pow((this.coord.x - targetCoord.x), 2) + Math.pow((this.coord.y - targetCoord.y), 2));	
+		return (int)(Math.sqrt(Math.pow((this.coord.x - targetCoord.x), 2) + Math.pow((this.coord.y - targetCoord.y), 2))+0.5);	
 	}
 	
 	public Coordinates getCoordinates()
