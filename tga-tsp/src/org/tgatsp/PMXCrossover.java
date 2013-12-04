@@ -64,6 +64,7 @@ public class PMXCrossover{
 		
 				ret[0]=new Solution(offspring1,null, 1/offspring1.getlength());
 				ret[1]=new Solution(offspring2,null, 1/offspring2.getlength());
+				//Tour.localSearch(ret[0].getChromosome());
 				//TODO provare pure ad applicare 2-opt (specialmente se la convergenza è lenta)
 			
 				//controllo tabu
@@ -71,6 +72,8 @@ public class PMXCrossover{
 				Integer idclan1=parents[1].getClan().getId();
 				if(!(((parents[0].getClan().isTabu(idclan1))) || (parents[1].getClan().isTabu(idclan0))))
 				{
+					//Tour.localSearch(ret[0].getChromosome());
+					//Tour.localSearch(ret[1].getChromosome());
 					parents[0].getClan().addTabu(idclan1);
 					ret[0].setClan(parents[0].getClan().copy());
 					parents[1].getClan().addTabu(idclan0);
@@ -141,7 +144,9 @@ public class PMXCrossover{
 			}
 			temp.addCliente(k, c);
 		}
-			return temp;		
+	
+		Tour.localSearch(temp);
+		return temp;		
 	}		
 }
 	

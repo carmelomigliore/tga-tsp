@@ -51,9 +51,7 @@ public class Cliente
 	
 	@Override
 	public int hashCode() {
-	    int hash = 3;
-	    hash = 53 * hash + (this.id != null ? this.id.hashCode() : 0);
-	    return hash;
+	    return 0;
 	}
 	
 	public String toString()

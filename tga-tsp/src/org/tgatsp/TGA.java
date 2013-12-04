@@ -1,5 +1,6 @@
 package org.tgatsp;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,8 +12,9 @@ public class TGA {
 	//private ExecutorService pool;
 	//private ExecutorService secondPool;
 	public static Solution DuncanMacLeod; //Global Maximum - The Immortal
-	//public static Solution ConnorMacLeod; //The old Highlander
-	//public final static LinkedBlockingQueue<Solution> highlanders = new LinkedBlockingQueue<Solution>(10);
+	public static Solution ConnorMacLeod; //The old Highlander
+	public final static Solution[] highlanders = new Solution[10];
+	public final static int highlandersDimension=10;
 	public static AtomicInteger mutationCount;
 	public static AtomicInteger tabuCount;
 	public static AtomicInteger localOptimumBuster;
@@ -62,20 +64,40 @@ public class TGA {
 		{
 			currentPopulation.evaluate();
 			//if(currentEpoch==0)
-			//	TGA.ConnorMacLeod=TGA.DuncanMacLeod;
-			
+			//TGA.ConnorMacLeod=TGA.DuncanMacLeod;
+			//System.out.println("\n1Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
+	//		System.out.println(currentPopulation);
 			for (int i=0; i<offspringsPerEpoch/2; i++)
 			{
 				cross[i].setPopulation(currentPopulation);
 				figli=cross[i].call();
 				sons.addSolution(figli[0]);
 				sons.addSolution(figli[1]);
-			}	
+			}
+			
+//			System.out.println(sons);
+			//System.out.println("\n2Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 			currentPopulation.survive(sons, rand);
+			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
+	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
-			System.out.println("\nEpoch:"+currentEpoch+"\nHighlander:\n"+TGA.DuncanMacLeod);
+			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount);
+		//	for(Solution s: TGA.highlanders)
+		//	{
+				System.out.println("\nConnor: "+TGA.ConnorMacLeod);
+		//	}
+			
+			//System.out.println("\n4Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 			currentEpoch++;
 		}
+		System.out.println("\n\n\n\n----------------Adunanza----------------\n\n");
+		for(Solution s: TGA.highlanders)
+		{
+			Tour.localSearch(s.getChromosome());
+			System.out.println(s);
+		}
+		Tour.localSearch(TGA.ConnorMacLeod.getChromosome());
+		System.out.println("\nConnor: "+TGA.ConnorMacLeod);
 		//System.out.println("\nGlobal optimum:"+TGA.DuncanMacLeod+"Mutation: "+mutationCount+" Tabu: "+tabuCount);
 		
 	}

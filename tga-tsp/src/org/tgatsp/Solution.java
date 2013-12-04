@@ -44,7 +44,7 @@ public class Solution{
 		fitness=fit;
 	}
 	
-	public float getFitness()
+	public Float getFitness()
 	{
 		if(fitness!=null)
 			return fitness;
@@ -79,7 +79,7 @@ public class Solution{
 	{
 		//return chromosome.toString() + "|" + clan.toString() + " Fitness: "+fitness + "\n";
 		
-		return "\nLenght: "+chromosome.getlength()+" Fitness: "+fitness+" Window: "+window;
+		return "\nLenght: "+chromosome.getlength()+"\n"+chromosome;
 	}
 	
 	public static Solution randomOffspring(Random rand)
@@ -128,8 +128,6 @@ public class Solution{
 	
 	@Override
 	public int hashCode() {
-	    int hash = 3;
-	    hash = 53 * hash + (this.chromosome != null ? this.chromosome.hashCode() : 0);
 	    return 0;
 	}
 	

@@ -52,16 +52,51 @@ public class Population {
 	private void calculateDuncan()
 	{
 		float max =0;
+		//float debug;
+		for(int i=0; i<TGA.highlandersDimension; i++)
+		{
+			TGA.highlanders[i]=null;
+		}
+		//TGA.highlanders.clear();
 		Solution temp=null;
-			for (Solution s : population)
+		int count=0;
+		boolean contained;
+		//System.out.println("\n6Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
+		//if(TGA.DuncanMacLeod!=null)
+			//System.out.println("6fitness"+TGA.DuncanMacLeod.getChromosome().getlength());
+		while(count<TGA.highlandersDimension)
+		{
+			max=0;
+		//System.out.println(population);
+			for (Solution s : this.population)
 			{
-				if(s.getFitness()>max);
+				contained=false;
+				if(s.getFitness()>max)
 				{
-					max=s.getFitness();
-					temp=s;
+					for (Solution sol : TGA.highlanders)
+					{
+						//boolean debug=(sol==s);
+						if(sol==s)
+						{
+							contained=true;
+							break;
+						}
+					}
+					if(!contained)
+					{
+						max=s.getFitness();
+						temp=s;
+					}
 				}
 			}
-			TGA.DuncanMacLeod=temp;
+			TGA.highlanders[count]=temp;
+			count++;
+		}
+		TGA.DuncanMacLeod=TGA.highlanders[0];
+		if(TGA.ConnorMacLeod==null || TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
+		{
+			TGA.ConnorMacLeod=TGA.DuncanMacLeod;
+		}
 	}
 	
 	private void calculateFitnessSum()
@@ -119,7 +154,7 @@ public class Population {
 	{
 		this.population.ensureCapacity(this.getSize()+newGeneration.getSize());
 		this.population.addAll(this.getSize(), newGeneration.getPopulation());
-		//calculateDuncan(); //We set the new Highlander
+		calculateDuncan(); //We set the new Highlander
 		/*if(TGA.DuncanMacLeod==TGA.ConnorMacLeod)
 		{
 			TGA.localOptimumBuster.incrementAndGet();
@@ -154,7 +189,6 @@ public class Population {
 		while(toKill>0)
 		{
 			victim=rand.nextFloat();
-			boolean killingFlag=false;
 			for (j=0; j<population.size(); j++)
 			{
 				if(population.get(j).getWindow()>victim)
@@ -163,13 +197,17 @@ public class Population {
 			}
 			if(j==population.size())
 				j--;
-			killingFlag=population.get(j).getKillingFlag();
-			//boolean isHighlander = TGA.highlanders.contains(population.get(j));
-			if(killingFlag==false)
+			//boolean killingFlag=population.get(j).getKillingFlag();
+			boolean isHighlander=(population.get(j)==TGA.DuncanMacLeod);
+			
+			
+			if(!isHighlander && population.get(j).getKillingFlag()==false)
 			{
 				population.get(j).setKillingFlag(true); //marked to be killed
 				toKill--;
 			}
+			//if(isHighlander) 
+			//	System.out.println("\n"+population.get(j).getKillingFlag());
 		}
 		
 		for (Iterator<Solution> it = population.iterator(); it.hasNext();)
@@ -180,6 +218,7 @@ public class Population {
 			}
 		}
 		population.trimToSize();
+		//System.out.println(population.contains(TGA.DuncanMacLeod));
 	//	int popsize= population.size();
 	//	int sonSize= newGeneration.getSize();
 		if(population.size()!=newGeneration.getSize())
@@ -228,17 +267,11 @@ public class Population {
 			   	t.addCliente(i, temp.remove(rand1));
 			   	k--;
 			}
-			float length = t.getlength();
-			float after=60000;
-			Tour nuovo=null;
-			while(after>length)
-			{
-				nuovo= new Tour(t);
-				Tour.twoOpt(nuovo,r);
-				after=nuovo.getlength();
-			}
 			Clan c = new Clan(j,TGA.tabuSize);
-			Solution s = new Solution(nuovo,c,null);
+			Tour.localSearch(t);
+			//System.out.println("\n"+t.getlength());
+			Solution s = new Solution(t,c,1/t.getlength());
+			//System.out.println(s);
 			p.addSolution(s);
 			j++;
 			
@@ -251,7 +284,7 @@ public class Population {
 	}
 	
 	
-	/*public static void nearestNeighbour(Population p,int startIndex, int num, Random r)
+	public static void nearestNeighbour(Population p,int startIndex, int num, Random r)
 	{
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
 		int rand1;
@@ -300,10 +333,10 @@ public class Population {
 			j++;
 			temp.clear();
 		}	
-	}*/	
+	}
 	
 	
-	public static void nearestNeighbour(Population p,int startIndex)
+	/*public static void nearestNeighbour(Population p,int startIndex)
 	{
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
 		int j=startIndex;
@@ -352,9 +385,10 @@ public class Population {
 			temp.clear();
 		}
 		Tour t = new Tour(arrayClienti.size());
+		t.getTour().clear();
 		t.getTour().addAll(Arrays.asList(Cliente.listaClienti));
 		Clan c = new Clan(j+1,TGA.tabuSize);
 		Solution sol=new Solution(t,c,null);
 		p.addSolution(sol);
-	}
+	}*/
 }

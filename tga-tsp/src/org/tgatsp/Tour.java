@@ -1,9 +1,6 @@
 package org.tgatsp;
 
 
-import Tour;
-import twopt;
-
 import java.util.*;
 
 public class Tour
@@ -97,16 +94,16 @@ public class Tour
 		length= new Float(temp);	
 	}
 	
-	public float getlength()
+	public Float getlength()
 	{
 		if (length!=null)
 		{
-			return length.floatValue();
+			return length;
 		}
 		else
 		{
 			this.calculatelength();
-			return length.floatValue();
+			return length;
 		}
 	}
 	
@@ -128,7 +125,7 @@ public class Tour
 	@Override
 	public boolean equals(Object s)
 	{
-		if (this.tour.equals(s))
+		if (this==s || this.tour.equals(s))
 			return true;
 		else
 			return false;
@@ -136,9 +133,7 @@ public class Tour
 	
 	@Override
 	public int hashCode() {
-	    int hash = 3;
-	    hash = 53 * hash + (this.tour != null ? this.tour.hashCode() : 0);
-	    return hash;
+	    return 0;
 	}
 	
 	public int getSize()
@@ -168,9 +163,9 @@ public class Tour
 	public static void twoOpt(Tour t, int inf, int sup)
 	{
 
-		float len_prec = t.getlength();
+		Float len_prec = t.getlength();
 		Tour temporaneo = new Tour(t.getSize());
-		int counter = 0;
+		//int counter = 0;
 		
 		
 			for(int i =0; i<inf; i++)
@@ -187,7 +182,7 @@ public class Tour
 			{
 				temporaneo.setCliente(k, t.getCliente(k));
 			}
-			counter++;
+			//counter++;
 		
 		
 		if(temporaneo.getlength() < len_prec)

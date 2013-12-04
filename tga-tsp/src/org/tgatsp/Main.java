@@ -6,24 +6,19 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		final int populationSize=1000;
+		final int populationSize=10;
 		final int maxEpoch=1000;
-		final int deadlockThreshold=1000;
+		final int deadlockThreshold=10; //TODO deadlock= a popsize
 		final float tabuCoefficient=0.4F;
 		Population pop= new Population(populationSize);
 		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,tabuCoefficient);
 		Cliente.init(args[0]);
 		Random rand= new Random();
-		Population.randomPopulation(0, 947, pop, rand);
-		//Population.nearestNeighbour(pop, 500, 1500, rand);
-		Population.nearestNeighbour(pop, 947);
-		//Population.randomPopulation2Opt(0, 1500, pop, rand);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//Population.randomPopulation(0, 200, pop, rand);
+		//Population.nearestNeighbour(pop, 0, 20, rand);
+		//Population.nearestNeighbour(pop, 947);
+		Population.randomPopulation2Opt(0, 10, pop, rand);
+		//System.out.println(pop);
 		algorithm.startEngine();
 		}
 		
