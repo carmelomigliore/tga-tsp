@@ -226,6 +226,7 @@ public class Tour
 				else
 					Tour.twoOpt(t, k, i);
 			}
+			neighbours.clear();
 		}
 		
 	}
