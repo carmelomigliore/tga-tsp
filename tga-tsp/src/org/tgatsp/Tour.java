@@ -199,4 +199,35 @@ public class Tour
 	
 
 	
+	
+	public static void fixedRadius(Tour t)
+	{
+		int dim = t.getSize();
+		float radius;
+		LinkedList<Integer> neighbours=new LinkedList<Integer>();
+		//	int rand = r.nextInt(dim/10);
+		Cliente tmp;
+		for(int i = 1; i < dim; i++)
+		{
+			tmp=t.getCliente(i);
+			radius=tmp.calculateDistance(t.getCliente(i-1));
+			for(int j=0;j<dim;j++)
+			{
+				if(j==i-1 || j==i) continue;
+				if(tmp.calculateDistance(t.getCliente(j))<radius)
+				{
+					neighbours.add(j);
+				}
+			}
+			for(Integer k: neighbours)
+			{
+				if(i<k)
+					Tour.twoOpt(t, i, k);
+				else
+					Tour.twoOpt(t, k, i);
+			}
+		}
+		
+	}
+	
 }
