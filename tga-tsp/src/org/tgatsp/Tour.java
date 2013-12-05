@@ -160,7 +160,7 @@ public class Tour
 		
 	}
 		
-	public static boolean twoOpt(Tour t, int inf, int sup)
+	public static void twoOpt(Tour t, int inf, int sup)
 	{
 
 		Integer len_prec = t.getlength();
@@ -192,35 +192,10 @@ public class Tour
 				t.setCliente(k,temporaneo.getCliente(k));
 			}
 			t.markToRecalculate();
-			return true;
 			//twopt.twoOptc(t, r);
 		}
-		return false;
 				
 	}
-	
-	public static void noLook(Tour t)
-	{		
-		int dim = t.getSize();
-		boolean improve_flag;
-		for(int i=0; i < dim; i++)
-		{
-			if(t.getCliente(i).nolook == true) continue;
-			improve_flag = false;
-			for(int j = i+1; j< dim; j++)
-			{
-				if(Tour.twoOpt(t,i,j)) 
-				{
-					t.getCliente(i).nolook = false;
-					t.getCliente(j).nolook = false;
-					improve_flag = true;
-				}
-			}
-			if(improve_flag == false) t.getCliente(i).nolook = true;
-		 }				
-	 }
-	
-	
 	
 
 	
