@@ -113,9 +113,7 @@ public class Solution{
 		chromosome.insertCliente(insertionPosition, c);
 		//System.out.println(chromosome);
 		clan=new Clan(TGA.populationSize+TGA.mutationCount.incrementAndGet(), TGA.tabuSize);
-		
-		
-		
+			
 	}
 	@Override
 	public boolean equals(Object s)
