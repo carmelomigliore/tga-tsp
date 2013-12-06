@@ -59,6 +59,8 @@ public class TGA {
 		{
 			cross[j]=new PMXCrossover(deadlockThreshold, rand);		
 		}
+		
+		
 		long prima=0;
 		long dopo=0;
 		while(currentEpoch<maxEpoch)
