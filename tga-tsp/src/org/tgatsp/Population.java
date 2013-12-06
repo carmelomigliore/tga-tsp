@@ -96,6 +96,7 @@ public class Population {
 		if(TGA.ConnorMacLeod==null || TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
 		{
 			TGA.ConnorMacLeod=TGA.DuncanMacLeod;
+			//Tour.localSearch(TGA.ConnorMacLeod.clonechromosome());
 		}
 	}
 	

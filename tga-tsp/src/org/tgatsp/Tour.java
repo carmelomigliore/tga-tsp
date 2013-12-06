@@ -107,6 +107,11 @@ public class Tour
 		}
 	}
 	
+	public void subLength(Integer sub)
+	{
+		this.length-=sub;
+	}
+	
 	public void setFitness(Integer length)
 	{
 		this.length=length;
@@ -154,43 +159,83 @@ public class Tour
 		{
 			for(int k = i + 1; k < dim; k++)
 			{
-				Tour.twoOpt(t, i, k);
+				Tour.twoOpt(t, i, k,dim);
 			}
 		}
 		
 	}
+	
+	 public static void twoOpt(Tour t, int inf, int sup)
+     {
+
+             Integer len_prec = t.getlength();
+             Tour temporaneo = new Tour(t.getSize());
+             //int counter = 0;
+             
+         //    System.out.println(t);
+                     for(int i =0; i<inf; i++)
+                     {
+                             temporaneo.setCliente(i, t.getCliente(i));
+                     }
+             
+                     for(int j=0; j<sup-inf; j++)
+                             {
+                             temporaneo.setCliente(j+inf, t.getCliente(sup-j-1));
+                             }
+             
+                     for(int k=sup; k<t.getSize(); k++)
+                     {
+                             temporaneo.setCliente(k, t.getCliente(k));
+                     }
+                     //counter++;
+        //     System.out.println(temporaneo);
+             
+             if(temporaneo.getlength() < len_prec)
+             {
+                     for(int k = inf; k<sup; k++)
+                     {
+                             t.setCliente(k,temporaneo.getCliente(k));
+                     }
+                     t.markToRecalculate();
+                     //twopt.twoOptc(t, r);
+             }
+                             
+     }
 		
-	public static void twoOpt(Tour t, int inf, int sup)
+	 
+	 /*2-opt sbagliato, ma migliore!!!*/
+	public static void twoOpt(Tour t, int inf, int sup, int dim)
 	{
 
-		Integer len_prec = t.getlength();
-		Tour temporaneo = new Tour(t.getSize());
+		Integer len_prev_edges = t.getCliente(inf).calculateDistance(t.getCliente((inf-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente((sup-1+dim)%dim));
+		Integer len_new_edges;
+		Cliente[] temporaneo = new Cliente[sup-inf+2];
 		//int counter = 0;
 		
 		
-			for(int i =0; i<inf; i++)
-			{
-				temporaneo.setCliente(i, t.getCliente(i));
-			}
+		//	System.out.println(t);
+			temporaneo[0]=t.getCliente((inf-1+dim)%dim);
 		
 			for(int j=0; j<sup-inf; j++)
 				{
-				temporaneo.setCliente(j+inf, t.getCliente(sup-j-1));
+					temporaneo[j+1]= t.getCliente(sup-j-1);
 				}
 		
-			for(int k=sup; k<t.getSize(); k++)
-			{
-				temporaneo.setCliente(k, t.getCliente(k));
-			}
+			temporaneo[sup-inf+1]=t.getCliente(sup);
 			//counter++;
+		//	for(Cliente c : temporaneo)
+		//	System.out.println(c);
+			
+		len_new_edges= temporaneo[0].calculateDistance(temporaneo[1])+temporaneo[sup-inf+1].calculateDistance(temporaneo[sup-inf]);
 		
-		
-		if(temporaneo.getlength() < len_prec)
+		if(len_new_edges<len_prev_edges)
 		{
-			for(int k = inf; k<sup; k++)
+			
+			for(int k = inf; k<=sup; k++)
 			{
-				t.setCliente(k,temporaneo.getCliente(k));
+				t.setCliente(k,temporaneo[k-inf+1]);
 			}
+			
 			t.markToRecalculate();
 			//twopt.twoOptc(t, r);
 		}
@@ -261,9 +306,9 @@ public class Tour
 			for(Integer k: neighbours)
 			{
 				if(i<k)
-					Tour.twoOpt(t, i, k);
+					Tour.twoOpt(t, i, k,dim);
 				else
-					Tour.twoOpt(t, k, i);
+					Tour.twoOpt(t, k, i,dim);
 			}
 			neighbours.clear();
 		}
