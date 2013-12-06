@@ -197,6 +197,45 @@ public class Tour
 				
 	}
 	
+	public static boolean twoOptbool(Tour t, int inf, int sup)
+	{
+
+		Integer len_prec = t.getlength();
+		Tour temporaneo = new Tour(t.getSize());
+		//int counter = 0;
+		
+		
+			for(int i =0; i<inf; i++)
+			{
+				temporaneo.setCliente(i, t.getCliente(i));
+			}
+		
+			for(int j=0; j<sup-inf; j++)
+				{
+				temporaneo.setCliente(j+inf, t.getCliente(sup-j-1));
+				}
+		
+			for(int k=sup; k<t.getSize(); k++)
+			{
+				temporaneo.setCliente(k, t.getCliente(k));
+			}
+			//counter++;
+		
+		
+		if(temporaneo.getlength() < len_prec)
+		{
+			for(int k = inf; k<sup; k++)
+			{
+				t.setCliente(k,temporaneo.getCliente(k));
+			}
+			t.markToRecalculate();
+			return true;
+			//twopt.twoOptc(t, r);
+		}
+		return false;
+				
+	}
+	
 
 	
 	
@@ -227,6 +266,53 @@ public class Tour
 					Tour.twoOpt(t, k, i);
 			}
 			neighbours.clear();
+		}
+		
+	}
+	
+	
+	public static void fixedRadiusNolook(Tour t)
+	{
+		int dim = t.getSize();
+		float radius;
+		boolean improve_flag;
+		LinkedList<Integer> neighbours=new LinkedList<Integer>();
+		//	int rand = r.nextInt(dim/10);
+		Cliente tmp;
+		for(int i = 1; i < dim; i++)
+		{
+			if(t.getCliente(i).nolook == true) continue;
+			improve_flag = false;
+			tmp=t.getCliente(i);
+			radius=tmp.calculateDistance(t.getCliente(i-1));
+			for(int j=0;j<dim;j++)
+			{
+				if(j==i-1 || j==i) continue;
+				if(tmp.calculateDistance(t.getCliente(j))<radius)
+				{
+					neighbours.add(j);
+				}
+			}
+			for(Integer k: neighbours)
+			{
+				if(i<k)
+					if(Tour.twoOptbool(t, i, k))
+					{
+						t.getCliente(i).nolook = false;
+						t.getCliente(k).nolook = false;
+						improve_flag = true;
+					}
+				else
+					if(Tour.twoOptbool(t, k, i))
+					{
+						t.getCliente(i).nolook = false;
+						t.getCliente(k).nolook = false;
+						improve_flag = true;
+						
+					}
+			}
+			neighbours.clear();
+			if(improve_flag == false) t.getCliente(i).nolook = true;
 		}
 		
 	}
