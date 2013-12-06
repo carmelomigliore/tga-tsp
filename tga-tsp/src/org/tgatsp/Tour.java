@@ -157,9 +157,9 @@ public class Tour
 	//	int rand = r.nextInt(dim/10);
 		for(int i = 0; i < dim - 1; i++)
 		{
-			for(int k = i + 1; k < dim; k++)
+			for(int k = i + 2; k < dim; k++)
 			{
-				Tour.twoOpt(t, i, k,dim);
+				Tour.twoOptSublist(t, i, k,dim);
 			}
 		}
 		
@@ -235,6 +235,64 @@ public class Tour
 			{
 				t.setCliente(k,temporaneo[k-inf+1]);
 			}
+			
+			t.markToRecalculate();
+			//twopt.twoOptc(t, r);
+		}
+				
+	}
+	
+	public static void twoOptSublist(Tour t, int inf, int sup, int dim)
+	{
+
+		Integer len_prev_edges = t.getCliente(inf).calculateDistance(t.getCliente((inf-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente((sup-1+dim)%dim));
+		Integer len_new_edges;
+		LinkedList<Cliente> temporaneo;
+		//int counter = 0;
+		
+		//if(inf!=0)
+			temporaneo=new LinkedList<Cliente>(t.getTour().subList(inf, sup)); //sup+1 escluso, quindi da inf-1 a sup
+		/*else
+		{
+			//temporaneo[0]=t.getCliente((inf-1+dim)%dim);
+			for(int j=0; j<sup-inf; j++)
+			{
+				temporaneo.add(t.getCliente(inf+j));
+			}
+	
+			//temporaneo[sup-inf+1]=t.getCliente(sup);
+		}*/
+		//System.out.println(t);
+		//System.out.println(temporaneo);
+			//System.out.println(t)
+			/*temporaneo[0]=t.getCliente((inf-1+dim)%dim);
+		
+			for(int j=0; j<sup-inf; j++)
+				{
+					temporaneo[j+1]= t.getCliente(sup-j-1);
+				}
+		
+			temporaneo[sup-inf+1]=t.getCliente(sup);
+			*/
+			//counter++;
+			//for(Cliente c : temporaneo)
+			//System.out.println(c);
+			
+		len_new_edges= t.getCliente((inf-1+dim)%dim).calculateDistance(t.getCliente((sup-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente(inf));
+		
+		if(len_new_edges<len_prev_edges)
+		{
+			int count=0;
+			for(Iterator<Cliente> it = temporaneo.descendingIterator(); it.hasNext();)
+			{
+				t.setCliente(inf+count, it.next());
+				count++;
+			}
+			/*for(int k = 0; k<sup-inf; k++)
+			{
+				t.setCliente(k+inf,temporaneo[sup-inf-k]);
+			}
+			*/
 			
 			t.markToRecalculate();
 			//twopt.twoOptc(t, r);

@@ -59,7 +59,8 @@ public class TGA {
 		{
 			cross[j]=new PMXCrossover(deadlockThreshold, rand);		
 		}
-		
+		long prima=0;
+		long dopo=0;
 		while(currentEpoch<maxEpoch)
 		{
 			currentPopulation.evaluate();
@@ -67,6 +68,9 @@ public class TGA {
 			//TGA.ConnorMacLeod=TGA.DuncanMacLeod;
 			//System.out.println("\n1Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
+			
+			if(currentEpoch==0)
+				prima=System.currentTimeMillis();
 			for (int i=0; i<offspringsPerEpoch/2; i++)
 			{
 				cross[i].setPopulation(currentPopulation);
@@ -74,7 +78,8 @@ public class TGA {
 				sons.addSolution(figli[0]);
 				sons.addSolution(figli[1]);
 			}
-			
+			if(currentEpoch%999==0)
+				dopo=System.currentTimeMillis();
 //			System.out.println(sons);
 			//System.out.println("\n2Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 			currentPopulation.survive(sons, rand);
@@ -97,7 +102,7 @@ public class TGA {
 			System.out.println(s);
 		}
 		Tour.localSearch(TGA.ConnorMacLeod.getChromosome());
-		System.out.println("\nConnor: "+TGA.ConnorMacLeod);
+		System.out.println("\nTime:"+(dopo-prima)+"\nConnor: "+TGA.ConnorMacLeod);
 		//System.out.println("\nGlobal optimum:"+TGA.DuncanMacLeod+"Mutation: "+mutationCount+" Tabu: "+tabuCount);
 		
 	}
