@@ -271,7 +271,7 @@ public class Tour
 	}
 	
 	
-	public static void fixedRadiusNolook(Tour t)
+	/*public static void fixedRadiusNolook(Tour t)
 	{
 		int dim = t.getSize();
 		float radius;
@@ -315,6 +315,6 @@ public class Tour
 			if(improve_flag == false) t.getCliente(i).nolook = true;
 		}
 		
-	}
+	}*/
 	
 }
