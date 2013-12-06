@@ -81,7 +81,7 @@ public class TGA {
 			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
-			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount);
+			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount);
 		//	for(Solution s: TGA.highlanders)
 		//	{
 				System.out.println("\nConnor: "+TGA.ConnorMacLeod);

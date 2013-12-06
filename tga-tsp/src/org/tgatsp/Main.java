@@ -6,7 +6,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		final int populationSize=10;
+		final int populationSize=20;
 		final int maxEpoch=1000;
 		final int deadlockThreshold=10; //TODO deadlock= a popsize
 		final float tabuCoefficient=0.4F;
@@ -17,7 +17,7 @@ public class Main {
 		//Population.randomPopulation(0, 200, pop, rand);
 		//Population.nearestNeighbour(pop, 0, 20, rand);
 		//Population.nearestNeighbour(pop, 947);
-		Population.randomPopulation2Opt(0, 10, pop, rand);
+		Population.randomPopulation2Opt(0, 20, pop, rand);
 		//System.out.println(pop);
 		algorithm.startEngine();
 		}
