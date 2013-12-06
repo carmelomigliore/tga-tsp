@@ -15,7 +15,7 @@ public class Main {
 		Cliente.init(args[0]);
 		Random rand= new Random();
 		//Population.randomPopulation(0, 200, pop, rand);
-		Population.nearestNeighbour(pop, 0, 20, rand);
+		//Population.nearestNeighbour(pop, 0, 20, rand);
 		//Population.nearestNeighbour(pop, 947);
 		//Population.randomPopulation2Opt(0, 10, pop, rand);
 		//System.out.println(pop);

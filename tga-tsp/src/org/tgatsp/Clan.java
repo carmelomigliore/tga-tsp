@@ -11,7 +11,7 @@ public class Clan {
 	
 	public Clan (Integer id, int tabuSize)
 	{
-		this.id=id;
+		this.id=null;
 		this.tabu= new LinkedBlockingQueue<Integer>(tabuSize);
 	}
 	

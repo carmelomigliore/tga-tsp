@@ -145,7 +145,7 @@ public class PMXCrossover{
 			temp.addCliente(k, c);
 		}
 	
-		Tour.fixedRadius(temp);
+		Tour.localSearch(temp);
 		return temp;		
 	}		
 }
