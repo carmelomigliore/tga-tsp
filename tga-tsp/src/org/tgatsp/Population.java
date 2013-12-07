@@ -93,11 +93,7 @@ public class Population {
 			count++;
 		}
 		TGA.DuncanMacLeod=TGA.highlanders[0];
-		if(TGA.ConnorMacLeod==null || TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
-		{
-			TGA.ConnorMacLeod=TGA.DuncanMacLeod;
-			//Tour.localSearch(TGA.ConnorMacLeod.clonechromosome());
-		}
+		
 	}
 	
 	private void calculateFitnessSum()
@@ -156,17 +152,28 @@ public class Population {
 		this.population.ensureCapacity(this.getSize()+newGeneration.getSize());
 		this.population.addAll(this.getSize(), newGeneration.getPopulation());
 		calculateDuncan(); //We set the new Highlander
-		/*if(TGA.DuncanMacLeod==TGA.ConnorMacLeod)
+		if(TGA.DuncanMacLeod==TGA.ConnorMacLeod)
 		{
 			TGA.localOptimumBuster.incrementAndGet();
 		}
-		else if(TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
+		else if(TGA.ConnorMacLeod==null || TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
 		{
 			TGA.ConnorMacLeod=TGA.DuncanMacLeod;
 			TGA.localOptimumBuster.set(0);
-		}*/
+		}
 		
 			
+		if(TGA.localOptimumBuster.get()>TGA.nameccDisasterThreshold) //Namekian disaster
+		{
+			population.clear();
+			population.add(TGA.ConnorMacLeod);   
+			Population.randomPopulation2Opt(1, TGA.populationSize-1, this, rand);
+			TGA.localOptimumBuster.set(0);
+			population.trimToSize();
+			return;
+		}
+		
+		
 		calculateLengthSum();
 		//System.out.println(sumFitness);
 		population.get(0).setWindow(population.get(0).getChromosome().getlength()/sumLength);
@@ -186,19 +193,20 @@ public class Population {
 		*/
 		
 		//Controllo cloni
-		for(int i=0;i<population.size() && toKill>0 ;i++)
+		/*for(int i=0;i<population.size() && toKill>0 ;i++)
 		{
 			for(int j=i+1; j<population.size() && toKill>0 ;j++)
 			{
 				if(population.get(i).getFitness().equals(population.get(j).getFitness()))
 				{
-					population.remove(j);
+					System.out.println(population.remove(j));
+					System.out.println(population.get(i));
 					j--;
 					toKill--;
 					TGA.cloneKilled++;
 				}
 			}
-		}
+		}*/
 		
 		float victim;
 		int j=0;

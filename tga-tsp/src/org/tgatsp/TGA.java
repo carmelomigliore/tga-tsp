@@ -27,6 +27,7 @@ public class TGA {
 	public static int offspringsPerEpoch;
 	private int deadlockThreshold;
 	public static int cloneKilled;
+	public static int nameccDisasterThreshold; //threshold to apply the planet Namecc disaster
 	
 	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, float tabuCoefficient)
 	{
@@ -45,6 +46,7 @@ public class TGA {
 		rand = new Random();
 		TGA.offspringsPerEpoch=populationSize;
 		TGA.cloneKilled=0;
+		TGA.nameccDisasterThreshold=100;
 	}
 	
 	
@@ -88,7 +90,7 @@ public class TGA {
 			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
-			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled);
+			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled+" LocalBuster: "+TGA.localOptimumBuster);
 		//	for(Solution s: TGA.highlanders)
 		//	{
 				System.out.println("\nConnor: "+TGA.ConnorMacLeod);

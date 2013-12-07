@@ -8,7 +8,7 @@ public class Main {
 		
 		final int populationSize=50;
 		final int maxEpoch=1000;
-		final int deadlockThreshold=100; //TODO deadlock= a popsize
+		final int deadlockThreshold=50; //TODO deadlock= a popsize
 		final float tabuCoefficient=0.4F;
 		Population pop= new Population(populationSize);
 		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,tabuCoefficient);
