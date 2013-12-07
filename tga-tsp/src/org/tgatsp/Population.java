@@ -184,7 +184,22 @@ public class Population {
 			TGA.localOptimumBuster.set(0);
 		}
 		*/
-			
+		
+		//Controllo cloni
+		for(int i=0;i<population.size() && toKill>0 ;i++)
+		{
+			for(int j=i+1; j<population.size() && toKill>0 ;j++)
+			{
+				if(population.get(i).getFitness().equals(population.get(j).getFitness()))
+				{
+					population.remove(j);
+					j--;
+					toKill--;
+					TGA.cloneKilled++;
+				}
+			}
+		}
+		
 		float victim;
 		int j=0;
 		while(toKill>0)
@@ -324,6 +339,7 @@ public class Population {
 				temp.remove(ctmp);
 			//	System.out.println(t.toString());
 			}
+			Tour.localSearch(t);
 			Clan c = new Clan(j,TGA.tabuSize);
 	                //Solution s = new Solution(t,c,null);
 			//System.out.println(s.toString());

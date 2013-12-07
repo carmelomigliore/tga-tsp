@@ -159,7 +159,7 @@ public class Tour
 		{
 			for(int k = i + 2; k < dim; k++)
 			{
-				Tour.twoOptSublist(t, i, k,dim);
+				Tour.twoOpt(t, i, k,dim);
 			}
 		}
 		
@@ -340,7 +340,6 @@ public class Tour
 	}
 	
 
-	
 	
 	public static void fixedRadius(Tour t)
 	{

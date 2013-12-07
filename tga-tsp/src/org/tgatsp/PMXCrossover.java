@@ -65,7 +65,6 @@ public class PMXCrossover{
 				ret[0]=new Solution(offspring1,null, 1/(float)offspring1.getlength());
 				ret[1]=new Solution(offspring2,null, 1/(float)offspring2.getlength());
 				//Tour.localSearch(ret[0].getChromosome());
-				//TODO provare pure ad applicare 2-opt (specialmente se la convergenza è lenta)
 			
 				//controllo tabu
 				Integer idclan0=parents[0].getClan().getId();
@@ -145,7 +144,10 @@ public class PMXCrossover{
 			temp.addCliente(k, c);
 		}
 	
-		Tour.fixedRadius(temp);
+		//if(TGA.currentEpoch%10==0)
+		//	Tour.localSearch(temp);
+		//else
+			Tour.fixedRadius(temp);
 		return temp;		
 	}		
 }

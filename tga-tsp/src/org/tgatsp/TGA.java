@@ -1,8 +1,6 @@
 package org.tgatsp;
 
-import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TGA {
@@ -18,7 +16,7 @@ public class TGA {
 	public static AtomicInteger mutationCount;
 	public static AtomicInteger tabuCount;
 	public static AtomicInteger localOptimumBuster;
-	private int currentEpoch;
+	public static int currentEpoch;
 	private Population currentPopulation;
 	private Population sons;
 	private Random rand;
@@ -28,6 +26,7 @@ public class TGA {
 	private int maxEpoch;
 	public static int offspringsPerEpoch;
 	private int deadlockThreshold;
+	public static int cloneKilled;
 	
 	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, float tabuCoefficient)
 	{
@@ -40,11 +39,12 @@ public class TGA {
 		//this.pool=Executors.newFixedThreadPool(threadPoolSize); 
 		//this.secondPool=Executors.newCachedThreadPool();
 		this.currentPopulation=p;
-		this.currentEpoch=0;
+		TGA.currentEpoch=0;
 		this.maxEpoch=maxEpoch;
 		this.deadlockThreshold=deadlockThreshold;
 		rand = new Random();
 		TGA.offspringsPerEpoch=populationSize;
+		TGA.cloneKilled=0;
 	}
 	
 	
@@ -88,7 +88,7 @@ public class TGA {
 			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
-			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount);
+			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled);
 		//	for(Solution s: TGA.highlanders)
 		//	{
 				System.out.println("\nConnor: "+TGA.ConnorMacLeod);
