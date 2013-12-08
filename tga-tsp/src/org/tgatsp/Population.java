@@ -175,6 +175,7 @@ public class Population {
 		
 		
 		calculateLengthSum();
+		TGA.avgLength=(int)((this.sumLength/population.size())+0.5F);
 		//System.out.println(sumFitness);
 		population.get(0).setWindow(population.get(0).getChromosome().getlength()/sumLength);
 		for(int i=1; i<population.size(); i++)
@@ -222,7 +223,7 @@ public class Population {
 			if(j==population.size())
 				j--;
 			//boolean killingFlag=population.get(j).getKillingFlag();
-			boolean isHighlander=(population.get(j)==TGA.DuncanMacLeod);
+			boolean isHighlander= TGA.elitism && (population.get(j)==TGA.DuncanMacLeod);
 			
 			
 			if(!isHighlander && population.get(j).getKillingFlag()==false)

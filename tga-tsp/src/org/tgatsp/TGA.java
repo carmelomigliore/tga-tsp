@@ -1,5 +1,9 @@
 package org.tgatsp;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,6 +20,7 @@ public class TGA {
 	public static AtomicInteger mutationCount;
 	public static AtomicInteger tabuCount;
 	public static AtomicInteger localOptimumBuster;
+	public static boolean elitism;
 	public static int currentEpoch;
 	private Population currentPopulation;
 	private Population sons;
@@ -28,8 +33,11 @@ public class TGA {
 	private int deadlockThreshold;
 	public static int cloneKilled;
 	public static int nameccDisasterThreshold; //threshold to apply the planet Namecc disaster
+	public static int avgLength;
+	public static int optimalLength;
+	private String logfile;
 	
-	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, float tabuCoefficient)
+	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, int namecc, float tabuCoefficient, boolean elitism, int optimal, String logfile)
 	{
 		TGA.populationSize=populationSize;
 		TGA.mutationCount=new AtomicInteger();
@@ -46,7 +54,12 @@ public class TGA {
 		rand = new Random();
 		TGA.offspringsPerEpoch=populationSize;
 		TGA.cloneKilled=0;
-		TGA.nameccDisasterThreshold=100;
+		TGA.nameccDisasterThreshold=namecc;
+		TGA.elitism=elitism;
+		TGA.optimalLength=optimal;
+		TGA.DuncanMacLeod=null;
+		TGA.ConnorMacLeod=null;
+		this.logfile=logfile;
 	}
 	
 	
@@ -82,7 +95,7 @@ public class TGA {
 				sons.addSolution(figli[0]);
 				sons.addSolution(figli[1]);
 			}
-			if(currentEpoch%999==0)
+			if(currentEpoch==999)
 				dopo=System.currentTimeMillis();
 //			System.out.println(sons);
 			//System.out.println("\n2Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
@@ -90,16 +103,54 @@ public class TGA {
 			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
-			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled+" LocalBuster: "+TGA.localOptimumBuster);
+		//	System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled+" LocalBuster: "+TGA.localOptimumBuster+" AVGLen: "+TGA.avgLength);
 		//	for(Solution s: TGA.highlanders)
 		//	{
-				System.out.println("\nConnor: "+TGA.ConnorMacLeod);
+				//System.out.println("\nConnor: "+TGA.ConnorMacLeod);
 		//	}
 			
 			//System.out.println("\n4Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
+			if(TGA.ConnorMacLeod.getChromosome().getlength().intValue()==optimalLength)
+			{
+				dopo=System.currentTimeMillis();
+				PrintStream ps=null;
+				try {
+					ps=new PrintStream(new FileOutputStream(logfile,true));
+					ps.println("\nOptimum "+TGA.optimalLength+" found after "+currentEpoch+" epochs. Time: "+(dopo-prima));
+					ps.close();
+					break;
+					
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}finally{
+					if(ps!=null)
+					ps.close();
+					}
+			}
+				
 			currentEpoch++;
 		}
-		System.out.println("\n\n\n\n----------------Adunanza----------------\n\n");
+		
+		if(currentEpoch==maxEpoch)
+		{
+			dopo=System.currentTimeMillis();
+			PrintStream ps=null;
+			try {
+				ps=new PrintStream(new FileOutputStream(logfile,true));
+				ps.println("\nConnor's length: "+ConnorMacLeod.getChromosome().getlength()+". "+(((ConnorMacLeod.getChromosome().getlength()-optimalLength)/optimalLength)*100)+"% far from optimum. Time: "+(dopo-prima));
+				ps.close();		
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				if(ps!=null)
+				ps.close();
+				}
+		}
+		
+		/*System.out.println("\n\n\n\n----------------Adunanza----------------\n\n");
 		for(Solution s: TGA.highlanders)
 		{
 			Tour.localSearch(s.getChromosome());
@@ -108,7 +159,7 @@ public class TGA {
 		Tour.localSearch(TGA.ConnorMacLeod.getChromosome());
 		System.out.println("\nTime:"+(dopo-prima)+"\nConnor: "+TGA.ConnorMacLeod);
 		//System.out.println("\nGlobal optimum:"+TGA.DuncanMacLeod+"Mutation: "+mutationCount+" Tabu: "+tabuCount);
-		
+		*/
 	}
 
 }
