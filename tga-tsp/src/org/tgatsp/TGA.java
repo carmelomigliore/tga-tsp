@@ -1,6 +1,5 @@
 package org.tgatsp;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -103,10 +102,10 @@ public class TGA {
 			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
-		//	System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled+" LocalBuster: "+TGA.localOptimumBuster+" AVGLen: "+TGA.avgLength);
+			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled+" LocalBuster: "+TGA.localOptimumBuster+" AVGLen: "+TGA.avgLength);
 		//	for(Solution s: TGA.highlanders)
 		//	{
-				//System.out.println("\nConnor: "+TGA.ConnorMacLeod);
+				System.out.println("\nConnor: "+TGA.ConnorMacLeod);
 		//	}
 			
 			//System.out.println("\n4Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));

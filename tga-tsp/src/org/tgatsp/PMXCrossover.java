@@ -154,7 +154,8 @@ public class PMXCrossover{
 		//if(TGA.currentEpoch%10==0)
 		//	Tour.localSearch(temp);
 		//else
-			Tour.fixedRadius(temp);
+			for(int i=0; i<5; i++)
+				Tour.fixedRadius(temp);
 		return temp;		
 	}		
 }
