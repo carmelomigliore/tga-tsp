@@ -242,6 +242,47 @@ public class Tour
 				
 	}
 	
+	
+	public static boolean twoOptbool(Tour t, int inf, int sup, int dim)
+	{
+
+		Integer len_prev_edges = t.getCliente(inf).calculateDistance(t.getCliente((inf-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente((sup-1+dim)%dim));
+		Integer len_new_edges;
+		Cliente[] temporaneo = new Cliente[sup-inf+2];
+		//int counter = 0;
+		
+		
+		//	System.out.println(t);
+			temporaneo[0]=t.getCliente((inf-1+dim)%dim);
+		
+			for(int j=0; j<sup-inf; j++)
+				{
+					temporaneo[j+1]= t.getCliente(sup-j-1);
+				}
+		
+			temporaneo[sup-inf+1]=t.getCliente(sup);
+			//counter++;
+		//	for(Cliente c : temporaneo)
+		//	System.out.println(c);
+			
+		len_new_edges= temporaneo[0].calculateDistance(temporaneo[1])+temporaneo[sup-inf+1].calculateDistance(temporaneo[sup-inf]);
+		
+		if(len_new_edges<len_prev_edges)
+		{
+			
+			for(int k = inf; k<=sup; k++)
+			{
+				t.setCliente(k,temporaneo[k-inf+1]);
+			}
+			
+			t.markToRecalculate();
+			return true;
+			//twopt.twoOptc(t, r);
+		}
+		return false;
+				
+	}
+	
 	public static void twoOptSublist(Tour t, int inf, int sup, int dim)
 	{
 
@@ -300,47 +341,6 @@ public class Tour
 				
 	}
 	
-	public static boolean twoOptbool(Tour t, int inf, int sup)
-	{
-
-		Integer len_prec = t.getlength();
-		Tour temporaneo = new Tour(t.getSize());
-		//int counter = 0;
-		
-		
-			for(int i =0; i<inf; i++)
-			{
-				temporaneo.setCliente(i, t.getCliente(i));
-			}
-		
-			for(int j=0; j<sup-inf; j++)
-				{
-				temporaneo.setCliente(j+inf, t.getCliente(sup-j-1));
-				}
-		
-			for(int k=sup; k<t.getSize(); k++)
-			{
-				temporaneo.setCliente(k, t.getCliente(k));
-			}
-			//counter++;
-		
-		
-		if(temporaneo.getlength() < len_prec)
-		{
-			for(int k = inf; k<sup; k++)
-			{
-				t.setCliente(k,temporaneo.getCliente(k));
-			}
-			t.markToRecalculate();
-			return true;
-			//twopt.twoOptc(t, r);
-		}
-		return false;
-				
-	}
-	
-
-	
 	public static void fixedRadius(Tour t)
 	{
 		int dim = t.getSize();
@@ -373,7 +373,7 @@ public class Tour
 	}
 	
 	
-	/*public static void fixedRadiusNolook(Tour t)
+	public static void fixedRadiusNolook(Tour t, boolean noLook[])
 	{
 		int dim = t.getSize();
 		float radius;
@@ -383,7 +383,7 @@ public class Tour
 		Cliente tmp;
 		for(int i = 1; i < dim; i++)
 		{
-			if(t.getCliente(i).nolook == true) continue;
+			if(noLook[t.getCliente(i).getId()] == true) continue;
 			improve_flag = false;
 			tmp=t.getCliente(i);
 			radius=tmp.calculateDistance(t.getCliente(i-1));
@@ -398,25 +398,29 @@ public class Tour
 			for(Integer k: neighbours)
 			{
 				if(i<k)
-					if(Tour.twoOptbool(t, i, k))
+				{	
+					if(Tour.twoOptbool(t, i, k,dim))
 					{
-						t.getCliente(i).nolook = false;
-						t.getCliente(k).nolook = false;
+						noLook[t.getCliente(i).getId()] = false;
+						noLook[t.getCliente(k).getId()] = false;
 						improve_flag = true;
 					}
+				}
 				else
-					if(Tour.twoOptbool(t, k, i))
+				{
+					if(Tour.twoOptbool(t, k, i,dim))
 					{
-						t.getCliente(i).nolook = false;
-						t.getCliente(k).nolook = false;
+						noLook[t.getCliente(i).getId()] = false;
+						noLook[t.getCliente(k).getId()] = false;
 						improve_flag = true;
 						
 					}
+				}
 			}
 			neighbours.clear();
-			if(improve_flag == false) t.getCliente(i).nolook = true;
+			if(improve_flag == false) noLook[t.getCliente(i).getId()] = true;
 		}
 		
-	}*/
+	}
 	
 }

@@ -143,6 +143,13 @@ public class PMXCrossover{
 			}
 			temp.addCliente(k, c);
 		}
+		
+		boolean noLook[] = new boolean[Cliente.listaClienti.length];
+		
+		for(int i = 0; i< Cliente.listaClienti.length; i++)
+		{
+			noLook[i] = false;
+		}
 	
 		//if(TGA.currentEpoch%10==0)
 		//	Tour.localSearch(temp);

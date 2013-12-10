@@ -14,7 +14,6 @@ public class Cliente
 {
 	private final Integer id;
 	private final Coordinates coord;
-	//public boolean nolook;
 	public static Cliente[] listaClienti;
 	
 	
