@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TGA {
 	
+	public My_GUI gui;
 	public static String nome;
 	public static String comment;	
 	//private ExecutorService pool;
@@ -28,7 +29,7 @@ public class TGA {
 	private int deadlockThreshold;
 	public static int cloneKilled;
 	
-	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, float tabuCoefficient)
+	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, float tabuCoefficient,My_GUI my_gui)
 	{
 		TGA.populationSize=populationSize;
 		TGA.mutationCount=new AtomicInteger();
@@ -45,6 +46,7 @@ public class TGA {
 		rand = new Random();
 		TGA.offspringsPerEpoch=populationSize;
 		TGA.cloneKilled=0;
+		gui = my_gui;
 	}
 	
 	
@@ -95,6 +97,7 @@ public class TGA {
 		//	}
 			
 			//System.out.println("\n4Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
+			gui.drawTSP(ConnorMacLeod.getChromosome());	
 			currentEpoch++;
 		}
 		System.out.println("\n\n\n\n----------------Adunanza----------------\n\n");
