@@ -1,5 +1,7 @@
 package org.tgatsp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -9,7 +11,7 @@ public class PMXCrossover{
 	//private final ExecutorService pool;
 	private Random rand;
 	private final int deadlockThreshold;
-	private final Solution[] parents;
+	private Solution[] parents;
 	private final Solution ret[];
 	
 	public PMXCrossover(int deadlockThreshold, Random rand)
@@ -66,6 +68,8 @@ public class PMXCrossover{
 				ret[1]=new Solution(offspring2,null, 1/(float)offspring2.getlength());
 				//Tour.localSearch(ret[0].getChromosome());
 			
+			if(TGA.tabuSize!=0)
+			{
 				//controllo tabu
 				Integer idclan0=parents[0].getClan().getId();
 				Integer idclan1=parents[1].getClan().getId();
@@ -91,11 +95,14 @@ public class PMXCrossover{
 						TGA.tabuCount.incrementAndGet();
 						return ret;
 					}
+			}
 				counter++;
 		}
-		
-		ret[0].mutate(rand);
-		ret[1].mutate(rand);
+		//if(rand.nextFloat()<0.05F)
+		//{
+			ret[0].mutate(rand);
+			ret[1].mutate(rand);
+		//}
 		return ret;
 		
 	}
@@ -103,10 +110,10 @@ public class PMXCrossover{
 		
 	public static Tour offspring(Tour parent1, Tour parent2, int inf, int sup)
 	{
-		Tour temp = new Tour(parent1.getSize());
+		Cliente[] temp = new Cliente[parent1.getSize()];
 		for(int i=inf; i<sup; i++)
 		{
-			temp.addCliente(i,parent1.getCliente(i));
+			temp[i]=parent1.getCliente(i);
 		}
 		
 		HashMap<Cliente,Cliente> crossmap = new HashMap<Cliente,Cliente>(sup-inf);
@@ -128,7 +135,7 @@ public class PMXCrossover{
 			{
 				c=crossmap.get(c);
 			}
-			temp.addCliente(k, c);
+			temp[k]= c;
 		}
 			
 			/*
@@ -141,12 +148,12 @@ public class PMXCrossover{
 			{
 				c=crossmap.get(c);
 			}
-			temp.addCliente(k, c);
+			temp[k]= c;
 		}
 		
-		boolean noLook[] = new boolean[Cliente.listaClienti.length];
+		boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
 		
-		for(int i = 0; i< Cliente.listaClienti.length; i++)
+		for(int i = 0; i< Cliente.listaClienti.length+1; i++)
 		{
 			noLook[i] = false;
 		}
@@ -154,9 +161,9 @@ public class PMXCrossover{
 		//if(TGA.currentEpoch%10==0)
 		//	Tour.localSearch(temp);
 		//else
-			for(int i=0; i<5; i++)
-				Tour.fixedRadius(temp);
-		return temp;		
+		while(Tour.fixedRadiusNolook(temp,noLook));
+		
+		return new Tour(new ArrayList<Cliente>(Arrays.asList(temp)),null);		
 	}		
 }
 	

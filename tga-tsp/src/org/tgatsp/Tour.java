@@ -6,6 +6,7 @@ import java.util.*;
 public class Tour
 {
 	private final ArrayList<Cliente> tour;
+	private Set<Edge> edges;
 	private Integer length;
 	
 	
@@ -13,21 +14,46 @@ public class Tour
 	{
 		this.tour = new ArrayList<Cliente>(size);
 		while(tour.size() < size) tour.add(null);
+		edges=null;
 	}
 	
 	public Tour (ArrayList<Cliente> t, Integer length)
 	{
 		this.tour=t;
 		this.length=length;
+		this.edges=null;
 	}
 	
 	public Tour (Tour t)
 	{
 		this.tour=new ArrayList<Cliente>(t.getTour());
 		this.length=t.length;
+		this.edges=t.edges;
 	}
 	
 
+	public Set<Edge> calculateEdges()
+	{
+		Set<Edge> temp=new HashSet<Edge>(Cliente.listaClienti.length);
+		for(int i=0; i<Cliente.listaClienti.length-1; i++)
+		{
+			temp.add(new Edge(tour.get(i).getId(), tour.get(i+1).getId()));
+		}
+		temp.add(new Edge(tour.get(Cliente.listaClienti.length-1).getId(), tour.get(0).getId()));
+		return temp;
+	}
+	
+	public Set<Edge> getEdges()
+	{
+		if(edges!=null)
+			return edges;
+		else
+		{
+			edges=calculateEdges();
+			return edges;
+		}
+	}
+	
 	public Tour copy()
 	{ 
 		ArrayList <Cliente> temp = new ArrayList<Cliente>(tour.size());
@@ -243,24 +269,24 @@ public class Tour
 	}
 	
 	
-	public static boolean twoOptbool(Tour t, int inf, int sup, int dim)
+	public static boolean twoOptbool(Cliente[] t, int inf, int sup, int dim)
 	{
 
-		Integer len_prev_edges = t.getCliente(inf).calculateDistance(t.getCliente((inf-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente((sup-1+dim)%dim));
+		Integer len_prev_edges = t[inf].calculateDistance(t[(inf-1+dim)%dim])+t[sup].calculateDistance(t[(sup-1+dim)%dim]);
 		Integer len_new_edges;
 		Cliente[] temporaneo = new Cliente[sup-inf+2];
 		//int counter = 0;
 		
 		
 		//	System.out.println(t);
-			temporaneo[0]=t.getCliente((inf-1+dim)%dim);
+			temporaneo[0]=t[(inf-1+dim)%dim];
 		
 			for(int j=0; j<sup-inf; j++)
 				{
-					temporaneo[j+1]= t.getCliente(sup-j-1);
+					temporaneo[j+1]= t[sup-j-1];
 				}
 		
-			temporaneo[sup-inf+1]=t.getCliente(sup);
+			temporaneo[sup-inf+1]=t[sup];
 			//counter++;
 		//	for(Cliente c : temporaneo)
 		//	System.out.println(c);
@@ -272,10 +298,10 @@ public class Tour
 			
 			for(int k = inf; k<=sup; k++)
 			{
-				t.setCliente(k,temporaneo[k-inf+1]);
+				t[k]=temporaneo[k-inf+1];
 			}
 			
-			t.markToRecalculate();
+			//t.markToRecalculate();
 			return true;
 			//twopt.twoOptc(t, r);
 		}
@@ -373,24 +399,25 @@ public class Tour
 	}
 	
 	
-	public static void fixedRadiusNolook(Tour t, boolean noLook[])
+	public static boolean fixedRadiusNolook(Cliente[] t, boolean noLook[])
 	{
-		int dim = t.getSize();
+		int dim = t.length;
 		float radius;
 		boolean improve_flag;
+		boolean global_improve=false;
 		LinkedList<Integer> neighbours=new LinkedList<Integer>();
 		//	int rand = r.nextInt(dim/10);
 		Cliente tmp;
 		for(int i = 1; i < dim; i++)
 		{
-			if(noLook[t.getCliente(i).getId()] == true) continue;
+			if(noLook[t[i].getId()] == true) continue;
 			improve_flag = false;
-			tmp=t.getCliente(i);
-			radius=tmp.calculateDistance(t.getCliente(i-1));
+			tmp=t[i];
+			radius=tmp.calculateDistance(t[i-1]);
 			for(int j=0;j<dim;j++)
 			{
 				if(j==i-1 || j==i) continue;
-				if(tmp.calculateDistance(t.getCliente(j))<radius)
+				if(tmp.calculateDistance(t[j])<radius)
 				{
 					neighbours.add(j);
 				}
@@ -401,26 +428,27 @@ public class Tour
 				{	
 					if(Tour.twoOptbool(t, i, k,dim))
 					{
-						noLook[t.getCliente(i).getId()] = false;
-						noLook[t.getCliente(k).getId()] = false;
+						noLook[t[i].getId()] = false;
+						noLook[t[k].getId()] = false;
 						improve_flag = true;
+						global_improve=true;
 					}
 				}
 				else
 				{
 					if(Tour.twoOptbool(t, k, i,dim))
 					{
-						noLook[t.getCliente(i).getId()] = false;
-						noLook[t.getCliente(k).getId()] = false;
+						noLook[t[i].getId()] = false;
+						noLook[t[k].getId()] = false;
 						improve_flag = true;
-						
+						global_improve=true;
 					}
 				}
 			}
 			neighbours.clear();
-			if(improve_flag == false) noLook[t.getCliente(i).getId()] = true;
+			if(improve_flag == false) noLook[t[i].getId()] = true;
 		}
-		
+		return global_improve;
 	}
 	
 }

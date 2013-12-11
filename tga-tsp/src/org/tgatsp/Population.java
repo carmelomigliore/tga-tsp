@@ -143,8 +143,45 @@ public class Population {
 			}
 			if(i==population.size())
 				i--;
-		
 		return population.get(i);
+	}
+	
+	public Solution[] selectParentsDiversity(Random rand)
+	{
+		float random;
+		Solution[] parents=new Solution[2];
+		int i=0;
+		random=rand.nextFloat();
+		for(i=0; i<population.size(); i++)
+		{
+			if(population.get(i).getWindow()>random)
+			{
+				break;
+			}
+		}
+		if(i==population.size())
+			i--;
+		
+		parents[0]=population.get(i);
+		int edgesInCommon=Integer.MAX_VALUE;
+		Set <Edge> temp = new HashSet<Edge>(Cliente.listaClienti.length);
+		Solution min=null;
+		for(Solution s : population)
+		{
+			if(parents[0]!=s)
+			{
+				temp.addAll(s.getChromosome().getEdges());
+				temp.retainAll(parents[0].getChromosome().getEdges());
+				if(temp.size()<edgesInCommon)
+				{
+					edgesInCommon=temp.size();
+					min=s;
+				}
+			}
+			temp.clear();
+		}
+		parents[1]=min;
+		return parents;
 	}
 	
 	public void survive(Population newGeneration, Random rand)
@@ -161,6 +198,8 @@ public class Population {
 			TGA.ConnorMacLeod=TGA.DuncanMacLeod;
 			TGA.localOptimumBuster.set(0);
 		}
+		
+		//System.out.println(evaluateDiversity(this));
 		
 			
 		if(TGA.localOptimumBuster.get()>TGA.nameccDisasterThreshold) //Namekian disaster
@@ -284,18 +323,25 @@ public class Population {
 		while(j<num+startIndex)
 		{
 			int k = arrayClienti.size();
-			Tour t = new Tour(arrayClienti.size());
+			Cliente[] t = new Cliente[arrayClienti.size()];
 			ArrayList<Cliente> temp = new ArrayList<Cliente> (arrayClienti);
 			for(int i =0; i<arrayClienti.size(); i++)
 			{
 			   	rand1 = r.nextInt(k);
-			   	t.addCliente(i, temp.remove(rand1));
+			   	t[i]= temp.remove(rand1);
 			   	k--;
 			}
 			Clan c = new Clan(j,TGA.tabuSize);
-			Tour.localSearch(t);
+			boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
+			
+			for(int i = 0; i< Cliente.listaClienti.length+1; i++)
+			{
+				noLook[i] = false;
+			}
+			while(Tour.fixedRadiusNolook(t,noLook));
 			//System.out.println("\n"+t.getlength());
-			Solution s = new Solution(t,c,1/(float)t.getlength());
+			Tour tour= new Tour(new ArrayList<Cliente>(Arrays.asList(t)),null);
+			Solution s = new Solution(tour,c,1/(float)tour.getlength());
 			//System.out.println(s);
 			p.addSolution(s);
 			j++;
@@ -348,7 +394,8 @@ public class Population {
 				temp.remove(ctmp);
 			//	System.out.println(t.toString());
 			}
-			Tour.localSearch(t);
+			for(int i=0; i<3;i++)
+				Tour.localSearch(t);
 			Clan c = new Clan(j,TGA.tabuSize);
 	                //Solution s = new Solution(t,c,null);
 			//System.out.println(s.toString());
@@ -417,4 +464,33 @@ public class Population {
 		Solution sol=new Solution(t,c,null);
 		p.addSolution(sol);
 	}*/
+	
+	private int evaluateDiversity(Population p)
+	{
+		ArrayList<Set<Edge>> edges= new ArrayList<Set<Edge>>(p.getSize());
+		Set<Edge> temp;
+		for(Solution s : p.getPopulation())
+		{
+			temp=new HashSet<Edge>(Cliente.listaClienti.length);
+			
+			edges.add(temp);
+		}
+		int diversity=0;
+		for(int i=0; i<edges.size(); i++)
+		{
+			for(int j=i+1; j<edges.size(); j++)
+			{
+				diversity+=calculateDiversity(edges.get(i), edges.get(j));
+			}
+		}
+		
+		return diversity;
+	}
+	
+	public static int calculateDiversity(Set<Edge> first, Set<Edge> second)
+	{
+		Set<Edge> temp= new HashSet<Edge>(first);
+		temp.retainAll(second); //intersection
+		return temp.size();
+	}
 }
