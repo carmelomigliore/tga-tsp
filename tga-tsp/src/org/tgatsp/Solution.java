@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Solution{
+public class Solution implements Comparable<Solution>{
 	
 	private final Tour chromosome;
 	private Clan clan;
@@ -75,6 +75,11 @@ public class Solution{
 		return killingFlag;
 	}
 	
+	public int compareTo(Solution s)
+	{
+		return chromosome.getlength()-s.getChromosome().getlength();
+	}
+	
 	public String toString()
 	{
 		//return chromosome.toString() + "|" + clan.toString() + " Fitness: "+fitness + "\n";
@@ -97,7 +102,7 @@ public class Solution{
 		Clan c = new Clan(TGA.populationSize+TGA.mutationCount.incrementAndGet(),TGA.tabuSize);
 		return new Solution(t,c,null);
 	}
-	
+		
 	public void mutate(Random rand)
 	{
 		
@@ -118,9 +123,9 @@ public class Solution{
 		
 	}
 	@Override
-	public boolean equals(Object s)
+	public boolean equals(Object obj)
 	{
-		if (this==s || this.chromosome.equals(s))
+		if (this==obj || this.chromosome.equals(obj))
 			return true;
 		else
 			return false;

@@ -54,6 +54,13 @@ public class Tour
 		}
 	}
 	
+	public static int calculateDiversity(Set<Edge> first, Set<Edge> second)
+	{
+		Set<Edge> temp= new HashSet<Edge>(first);
+		temp.retainAll(second); //intersection
+		return temp.size();
+	}
+	
 	public Tour copy()
 	{ 
 		ArrayList <Cliente> temp = new ArrayList<Cliente>(tour.size());
@@ -154,9 +161,9 @@ public class Tour
 	}
 	
 	@Override
-	public boolean equals(Object s)
+	public boolean equals(Object obj)
 	{
-		if (this==s || this.tour.equals(s))
+		if (this==obj || this.tour.equals(obj))
 			return true;
 		else
 			return false;
@@ -177,9 +184,9 @@ public class Tour
 		return tour.toString();
 	}
 	
-	public static void localSearch(Tour t)
+	public static void localSearch(Cliente[] t)
 	{
-		int dim = t.getSize();
+		int dim = t.length;
 	//	int rand = r.nextInt(dim/10);
 		for(int i = 0; i < dim - 1; i++)
 		{
@@ -230,24 +237,24 @@ public class Tour
 		
 	 
 	 /*2-opt sbagliato, ma migliore!!!*/
-	public static void twoOpt(Tour t, int inf, int sup, int dim)
+	public static boolean twoOpt(Cliente[] t, int inf, int sup, int dim)
 	{
 
-		Integer len_prev_edges = t.getCliente(inf).calculateDistance(t.getCliente((inf-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente((sup-1+dim)%dim));
+		Integer len_prev_edges = t[inf].calculateDistance(t[(inf-1+dim)%dim])+t[sup].calculateDistance(t[(sup-1+dim)%dim]);
 		Integer len_new_edges;
 		Cliente[] temporaneo = new Cliente[sup-inf+2];
 		//int counter = 0;
 		
 		
 		//	System.out.println(t);
-			temporaneo[0]=t.getCliente((inf-1+dim)%dim);
+			temporaneo[0]=t[(inf-1+dim)%dim];
 		
 			for(int j=0; j<sup-inf; j++)
 				{
-					temporaneo[j+1]= t.getCliente(sup-j-1);
+					temporaneo[j+1]= t[sup-j-1];
 				}
 		
-			temporaneo[sup-inf+1]=t.getCliente(sup);
+			temporaneo[sup-inf+1]=t[sup];
 			//counter++;
 		//	for(Cliente c : temporaneo)
 		//	System.out.println(c);
@@ -259,12 +266,13 @@ public class Tour
 			
 			for(int k = inf; k<=sup; k++)
 			{
-				t.setCliente(k,temporaneo[k-inf+1]);
+				t[k]=temporaneo[k-inf+1];
 			}
-			
-			t.markToRecalculate();
+			return true;
+			//t.markToRecalculate();
 			//twopt.twoOptc(t, r);
 		}
+		return false;
 				
 	}
 	
@@ -367,21 +375,22 @@ public class Tour
 				
 	}
 	
-	public static void fixedRadius(Tour t)
+	public static boolean fixedRadius(Cliente[] t)
 	{
-		int dim = t.getSize();
+		int dim = t.length;
+		boolean improve=false;
 		float radius;
 		LinkedList<Integer> neighbours=new LinkedList<Integer>();
 		//	int rand = r.nextInt(dim/10);
 		Cliente tmp;
 		for(int i = 1; i < dim; i++)
 		{
-			tmp=t.getCliente(i);
-			radius=tmp.calculateDistance(t.getCliente(i-1));
+			tmp=t[i];
+			radius=tmp.calculateDistance(t[i-1]);
 			for(int j=0;j<dim;j++)
 			{
 				if(j==i-1 || j==i) continue;
-				if(tmp.calculateDistance(t.getCliente(j))<radius)
+				if(tmp.calculateDistance(t[j])<radius)
 				{
 					neighbours.add(j);
 				}
@@ -389,13 +398,19 @@ public class Tour
 			for(Integer k: neighbours)
 			{
 				if(i<k)
-					Tour.twoOpt(t, i, k,dim);
+				{
+					if(Tour.twoOpt(t, i, k,dim))
+						improve=true;
+				}
 				else
-					Tour.twoOpt(t, k, i,dim);
+				{
+					if(improve=Tour.twoOpt(t, k, i,dim))
+						improve=true;
+				}
 			}
-			neighbours.clear();
+			neighbours.clear();	
 		}
-		
+		return improve;
 	}
 	
 	

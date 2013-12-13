@@ -38,7 +38,7 @@ public class PMXCrossover{
 		Tour offspring1;
 		
 		parents[0]=pop.selectParent(rand);
-		
+		 // parents=pop.selectParentsDiversity(rand);
 		while(counter<deadlockThreshold)
 		{
 				do
@@ -73,28 +73,34 @@ public class PMXCrossover{
 				//controllo tabu
 				Integer idclan0=parents[0].getClan().getId();
 				Integer idclan1=parents[1].getClan().getId();
+				boolean acceptFirst=true;
+				boolean acceptSecond=true;
+				Solution check;
 				if(!(((parents[0].getClan().isTabu(idclan1))) || (parents[1].getClan().isTabu(idclan0))))
 				{
+					
 					//Tour.localSearch(ret[0].getChromosome());
 					//Tour.localSearch(ret[1].getChromosome());
-					parents[0].getClan().addTabu(idclan1);
-					ret[0].setClan(parents[0].getClan().copy());
-					parents[1].getClan().addTabu(idclan0);
-					ret[1].setClan(parents[1].getClan().copy());
-					return ret;
-				}
-				//else
-				//aspiration criteria
-					if(ret[0].getFitness()>TGA.DuncanMacLeod.getFitness() || ret[1].getFitness()>TGA.DuncanMacLeod.getFitness())
-					{
-					
 						parents[0].getClan().addTabu(idclan1);
 						ret[0].setClan(parents[0].getClan().copy());
 						parents[1].getClan().addTabu(idclan0);
 						ret[1].setClan(parents[1].getClan().copy());
-						TGA.tabuCount.incrementAndGet();
 						return ret;
-					}
+					
+					
+				}
+				//else
+				//aspiration criteria
+				if(ret[0].getFitness()>TGA.DuncanMacLeod.getFitness() || ret[1].getFitness()>TGA.DuncanMacLeod.getFitness())
+				{
+					
+					parents[0].getClan().addTabu(idclan1);
+					ret[0].setClan(parents[0].getClan().copy());
+					parents[1].getClan().addTabu(idclan0);
+					ret[1].setClan(parents[1].getClan().copy());
+					TGA.tabuCount.incrementAndGet();
+					return ret;
+				}
 			}
 				counter++;
 		}
@@ -161,8 +167,13 @@ public class PMXCrossover{
 		//if(TGA.currentEpoch%10==0)
 		//	Tour.localSearch(temp);
 		//else
-		while(Tour.fixedRadiusNolook(temp,noLook));
-		
+		//while(Tour.fixedRadiusNolook(temp,noLook));
+		//for(int i=0; i<5; i++)
+		boolean again=true;
+		while(again)
+		{
+			again=Tour.fixedRadiusNolook(temp,noLook);
+		}
 		return new Tour(new ArrayList<Cliente>(Arrays.asList(temp)),null);		
 	}		
 }
