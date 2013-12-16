@@ -145,6 +145,7 @@ public class Population {
 				i--;
 		return population.get(i);
 	}
+
 	
 	public Solution[] selectParentsDiversity(Random rand)
 	{
@@ -310,20 +311,17 @@ public class Population {
 		this.population.ensureCapacity(this.getSize()+newGeneration.getSize());
 		this.population.addAll(this.getSize(), newGeneration.getPopulation());
 		calculateDuncan(); //We set the new Highlander
-		int DuncanLength=TGA.DuncanMacLeod.getChromosome().getlength();
-		int ConnorLength=TGA.ConnorMacLeod==null?Integer.MAX_VALUE:TGA.ConnorMacLeod.getChromosome().getlength();
-		if((ConnorLength-DuncanLength)<=(ConnorLength/2000))
+		//int DuncanLength=TGA.DuncanMacLeod.getChromosome().getlength();
+		//int ConnorLength=TGA.ConnorMacLeod==null?Integer.MAX_VALUE:TGA.ConnorMacLeod.getChromosome().getlength();
+		if(TGA.DuncanMacLeod==TGA.ConnorMacLeod)
 		{
 			TGA.localOptimumBuster.incrementAndGet();
-		}
-		else if((ConnorLength-DuncanLength)>(ConnorLength/2000))
-		{
-			TGA.localOptimumBuster.set(0);
 		}
 		
 		if(TGA.ConnorMacLeod==null || TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
 		{
 			TGA.ConnorMacLeod=TGA.DuncanMacLeod;	
+			TGA.localOptimumBuster.set(0);
 		}
 		
 		//System.out.println(evaluateDiversity(this));
@@ -389,9 +387,11 @@ public class Population {
 			{
 				noLook[i] = false;
 			}
-			while(Tour.fixedRadiusNolook(t,noLook))
+			boolean again=true;
+			
+			while(again)
 			{
-				int x=0; //cheat the jit
+				again=Tour.fixedRadiusNolookNear(t,noLook); //cheat the jit
 			}
 			//System.out.println("\n"+t.getlength());
 			Tour tour= new Tour(new ArrayList<Cliente>(Arrays.asList(t)),null);
@@ -454,9 +454,12 @@ public class Population {
 			{
 				noLook[i] = false;
 			}
-			while(Tour.fixedRadiusNolook(t,noLook))
+			
+			boolean again=true;
+			
+			while(again)
 			{
-				int x=0; //cheat the jit
+				again=Tour.fixedRadiusNolook(t,noLook); //cheat the jit
 			}
 			Clan c = new Clan(j,TGA.tabuSize);
 	                //Solution s = new Solution(t,c,null);

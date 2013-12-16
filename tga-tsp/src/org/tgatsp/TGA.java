@@ -98,7 +98,11 @@ public class TGA {
 				dopo=System.currentTimeMillis();
 //			System.out.println(sons);
 			//System.out.println("\n2Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
+			//if(TGA.currentEpoch<50)
 			currentPopulation.surviveElitism(sons, rand);
+			//else
+			//currentPopulation.survive(sons, rand);
+			//currentPopulation.survive(sons, rand);
 			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();

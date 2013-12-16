@@ -1,8 +1,9 @@
 package org.tgatsp;
 
-import java.util.HashSet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
-import java.util.Set;
 
 public class Main {
 
@@ -11,16 +12,57 @@ public class Main {
 		final int populationSize=100;
 		final int maxEpoch=1000;
 		final int deadlockThreshold=100; //TODO deadlock= a popsize
-		final float tabuCoefficient=0.1F;
+		final float tabuCoefficient=0.0F;
 		final boolean elitism=true;
 		Population pop= new Population(populationSize);
-		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,15,tabuCoefficient,elitism,73682,"prova.txt");
+		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,40,tabuCoefficient,elitism,73682,"prova.txt");
 		Cliente.init(args[0]);
+		Cliente.findNearest(20);
+		System.out.println(Cliente.listaClienti[1]);
+		for(int i=0; i<Cliente.nearest[1].length; i++)
+		{
+			System.out.println(Cliente.nearest[1][i]);
+		}
 		Random rand= new Random(System.currentTimeMillis());
 		
 		//System.out.println(Population.calculateDiversity(disa, diesel));
 		//System.out.println(e.equals(f));
-		//Population.randomPopulation(0, 200, pop, rand);
+		
+		/*Population.randomPopulation2Opt(0, 2, pop, rand);
+		Solution s= pop.getPopulation().get(0);
+		Cliente[] c=new Cliente[Cliente.listaClienti.length];
+		Cliente[] d=new Cliente[Cliente.listaClienti.length];
+		Cliente[] e=new Cliente[Cliente.listaClienti.length];
+		c = s.getChromosome().getTour().toArray(c);
+		d = s.getChromosome().getTour().toArray(d);
+		e = s.getChromosome().getTour().toArray(e);
+		boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
+		
+		for(int i = 0; i< Cliente.listaClienti.length+1; i++)
+		{
+			noLook[i] = false;
+		}
+		boolean noLook2[] = new boolean[Cliente.listaClienti.length+1];
+		
+		for(int i = 0; i< Cliente.listaClienti.length+1; i++)
+		{
+			noLook2[i] = false;
+		}
+		Tour.fixedRadiusNolookNear(c,noLook);
+		//Tour.fixedRadius3Opt(c);
+		Tour.fixedRadiusNolook(d,noLook2);
+		Tour.localSearch(e);
+		ArrayList<Cliente> ac = new ArrayList<Cliente>(Arrays.asList(c));
+		ArrayList<Cliente> ad = new ArrayList<Cliente>(Arrays.asList(d));
+		ArrayList<Cliente> ae = new ArrayList<Cliente>(Arrays.asList(e));
+		Tour t = new Tour(ac,null);
+		Tour u = new Tour(ad,null);
+		Tour v = new Tour(ae,null);
+		System.out.println(t.getlength());
+		System.out.println(u.getlength());
+		System.out.println(v.getlength());
+		*/
+	
 		//Population.nearestNeighbour(pop, 0, 10, rand);
 		//Population.nearestNeighbour(pop, 947);
 		Population.randomPopulation2Opt(0, 100, pop, rand);
