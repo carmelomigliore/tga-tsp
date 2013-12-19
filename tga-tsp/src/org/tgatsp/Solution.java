@@ -84,7 +84,7 @@ public class Solution implements Comparable<Solution>{
 	{
 		//return chromosome.toString() + "|" + clan.toString() + " Fitness: "+fitness + "\n";
 		
-		return "\nLenght: "+chromosome.getlength()+"\n"+chromosome;
+		return "\nLenght: "+chromosome.getlength();
 	}
 	
 	public static Solution randomOffspring(Random rand)
@@ -125,10 +125,11 @@ public class Solution implements Comparable<Solution>{
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (this==obj || this.chromosome.equals(obj))
-			return true;
-		else
+		Solution s= (Solution)obj;
+		if(s==null || !this.fitness.equals(s.fitness))
 			return false;
+		else
+			return true;
 	}
 	
 	@Override

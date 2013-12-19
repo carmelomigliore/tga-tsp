@@ -129,6 +129,38 @@ public class Population {
 		//System.out.println(population);
 	}
 	
+	public Solution[] tournamentSelection(int size, Random rand)
+	{
+		int counter=0;
+		Solution[] parents=new Solution[2];
+		Solution max=null;
+		while(counter<size)
+		{
+			int random=rand.nextInt(population.size());
+			if(max==null || population.get(random).getFitness()>max.getFitness())
+			{
+				max=population.get(random);
+			}
+			counter++;
+		}
+		parents[0]=max;
+		max=null;
+		counter=0;
+		while(counter<size)
+		{
+			int random=rand.nextInt(population.size());
+			Solution s= population.get(random);
+			if(s==parents[0]) continue;
+			if(max==null || s.getFitness()>max.getFitness())
+			{
+				max=s;
+			}
+			counter++;
+		}
+		parents[1]=max;
+		return parents;
+	}
+	
 	public Solution selectParent(Random rand)
 	{
 		Float random;
@@ -324,14 +356,19 @@ public class Population {
 			TGA.localOptimumBuster.set(0);
 		}
 		
+		if(TGA.Richie==null || TGA.ConnorMacLeod.getFitness()>TGA.Richie.getFitness())
+		{
+			TGA.Richie=TGA.ConnorMacLeod;
+		}
+		
 		//System.out.println(evaluateDiversity(this));
 		
 			
 		if(TGA.localOptimumBuster.get()>TGA.nameccDisasterThreshold) //Namekian disaster
 		{
 			population.clear();
-			population.add(TGA.ConnorMacLeod);   
-			Population.randomPopulation2Opt(1, TGA.populationSize-1, this, rand);
+			Population.randomPopulation2Opt(0, TGA.populationSize, this, rand);
+			TGA.ConnorMacLeod=null;
 			TGA.localOptimumBuster.set(0);
 			population.trimToSize();
 			return;

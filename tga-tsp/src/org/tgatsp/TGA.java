@@ -14,6 +14,7 @@ public class TGA {
 	//private ExecutorService secondPool;
 	public static Solution DuncanMacLeod; //Global Maximum - The Immortal
 	public static Solution ConnorMacLeod; //The old Highlander
+	public static Solution Richie;
 	public final static Solution[] highlanders = new Solution[10];
 	public final static int highlandersDimension=10;
 	public static AtomicInteger mutationCount;
@@ -34,9 +35,13 @@ public class TGA {
 	public static int nameccDisasterThreshold; //threshold to apply the planet Namecc disaster
 	public static int avgLength;
 	public static int optimalLength;
+	public static float tournamentCoefficient;
+	public static long prima;
+	public static long timelimit;
+	
 	private String logfile;
 	
-	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, int namecc, float tabuCoefficient, boolean elitism, int optimal, String logfile)
+	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, int namecc, float tabuCoefficient, boolean elitism, int optimal, float tournamentCoefficient, long timelimit, String logfile)
 	{
 		TGA.populationSize=populationSize;
 		TGA.mutationCount=new AtomicInteger();
@@ -58,6 +63,8 @@ public class TGA {
 		TGA.optimalLength=optimal;
 		TGA.DuncanMacLeod=null;
 		TGA.ConnorMacLeod=null;
+		TGA.tournamentCoefficient=tournamentCoefficient;
+		TGA.timelimit=timelimit;
 		this.logfile=logfile;
 	}
 	
@@ -74,8 +81,7 @@ public class TGA {
 			cross[j]=new PMXCrossover(deadlockThreshold, rand);		
 		}
 		
-		
-		long prima=0;
+		prima=System.currentTimeMillis();
 		long dopo=0;
 		while(currentEpoch<maxEpoch)
 		{
@@ -85,8 +91,7 @@ public class TGA {
 			//System.out.println("\n1Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			
-			if(currentEpoch==0)
-				prima=System.currentTimeMillis();
+			
 			for (int i=0; i<offspringsPerEpoch/2; i++)
 			{
 				cross[i].setPopulation(currentPopulation);
@@ -107,13 +112,18 @@ public class TGA {
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
 			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled+" LocalBuster: "+TGA.localOptimumBuster+" AVGLen: "+TGA.avgLength);
-		//	for(Solution s: TGA.highlanders)
+			/*long now=System.currentTimeMillis();
+			double current=(double)((now-TGA.prima)-TGA.timelimit)/130000.0;
+			int tournamentSize=(int)(TGA.tournamentCoefficient*(Math.pow(Math.E,current))*TGA.populationSize+1);
+			System.out.println("Size: "+tournamentSize);
+			*/
+			//	for(Solution s: TGA.highlanders)
 		//	{
-				System.out.println("\nConnor: "+TGA.ConnorMacLeod);
+			System.out.println("\nConnor: "+TGA.ConnorMacLeod+"\nRichie: "+TGA.Richie);
 		//	}
 			
 			//System.out.println("\n4Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
-			if(TGA.ConnorMacLeod.getChromosome().getlength().intValue()==optimalLength)
+			/*if(TGA.ConnorMacLeod.getChromosome().getlength().intValue()==optimalLength)
 			{
 				dopo=System.currentTimeMillis();
 				PrintStream ps=null;
@@ -130,7 +140,7 @@ public class TGA {
 					if(ps!=null)
 					ps.close();
 					}
-			}
+			}*/
 				
 			currentEpoch++;
 		}
@@ -141,7 +151,7 @@ public class TGA {
 			PrintStream ps=null;
 			try {
 				ps=new PrintStream(new FileOutputStream(logfile,true));
-				ps.println("\nConnor's length: "+ConnorMacLeod.getChromosome().getlength()+". "+(((ConnorMacLeod.getChromosome().getlength()-optimalLength)/optimalLength)*100)+"% far from optimum. Time: "+(dopo-prima));
+				ps.println("\nConnor's length: "+ConnorMacLeod.getChromosome().getlength()+". "+"Time: "+(dopo-prima));
 				ps.close();		
 				
 			} catch (FileNotFoundException e) {

@@ -23,11 +23,11 @@ public class Test {
 		maxEpoch=1000;
 	}
 	
-	public void eil51()
+	/*public void eil51()
 	{
 		/*****************eil51********************/
 		
-		populationSize=100;
+	/*	populationSize=100;
 		deadlockThreshold=populationSize;
 		nameccDisaster=100;
 		optimalLength=426;
@@ -892,6 +892,6 @@ public class Test {
 			tga.startEngine();
 		}
 		
-	}
+	}*/
 	
 }

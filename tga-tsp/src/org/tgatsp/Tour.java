@@ -490,7 +490,7 @@ public class Tour
 		int index=-1;
 		int IdxMaxImpr=-1;
 		//	int rand = r.nextInt(dim/10);
-		for(int i = 1; i < dim; i++)
+		for(int i = 0; i < dim; i++)
 		{
 			if(noLook[t[i].getId()] == true) continue;
 			improve_flag = false;
@@ -542,58 +542,68 @@ public class Tour
 	}
 	
 	
-	
-	public static void fixedRadius3Opt(Cliente[] t)
+
+	public static boolean twoOptNolookNear(Cliente[] t, boolean noLook[])
 	{
 		int dim = t.length;
-		float first_radius;
-		float second_radius;
-		LinkedList<Integer> firstMove=new LinkedList<Integer>();
-		ArrayList<LinkedList<Integer>> secondMove= new ArrayList<LinkedList<Integer>>(t.length/5);
-		ArrayList<Integer> sort = new ArrayList<Integer>(3);
-		for(int i=0; i<dim;i++)
+		float radius;
+		boolean improve_flag;
+		boolean global_improve=false;
+		int improvement;
+		int index=-1;
+		int IdxMaxImpr=-1;
+		//	int rand = r.nextInt(dim/10);
+		for(int i = 0; i < dim; i++)
 		{
-			first_radius=t[i].calculateDistance(t[(i-1+dim)%dim]);
-			for(int j=i+2;j<dim;j++)
+			if(noLook[t[i].getId()] == true) continue;
+			improve_flag = false;
+			radius=t[i].calculateDistance(t[(i-1+dim)%dim]);
+			improvement=0;
+			IdxMaxImpr=-1;
+			for(int j=0;j<Cliente.nearest[0].length;j++)
 			{
-				if(j==i-1 || j==i || j==i+1) continue;
-				
-				if(t[(i-1+dim)%dim].calculateDistance(t[j])<first_radius)
-				{
-					
-					firstMove.add(j);
-					LinkedList<Integer> secondNeighbours=new LinkedList<Integer>();
-					second_radius=t[j].calculateDistance(t[(j-1+dim)%dim]);
-					for(int k=j+2; k<dim; k++)
+				index=-1;
+				//if(t[i].calculateDistance(Cliente.nearest[t[i].getId()-1][j])>=radius)
+				//	break;
+				//else
+				{		
+					for(int k=0; k<dim; k++)
 					{
-						if(k==i-1 || k==i || k==i+1 || k==j-1 || k==j || k==j+1) continue;
-						if(t[i].calculateDistance(t[k])<first_radius)
+						if(Cliente.nearest[t[i].getId()-1][j].equals(t[k]))
 						{
-							secondNeighbours.add(k);
+							index=k;
+							break;
 						}
 					}
-					secondMove.add(secondNeighbours);
-				
+					int prev_edges=t[i].calculateDistance(t[(i-1+dim)%dim])+t[index].calculateDistance(t[(index-1+dim)%dim]);
+					int after_edges=t[(i-1+dim)%dim].calculateDistance(t[(index-1+dim)%dim])+t[i].calculateDistance(t[index]);
+					if(after_edges<prev_edges && (prev_edges-after_edges)>improvement)
+					{
+						improvement=prev_edges-after_edges;
+						IdxMaxImpr=index;
+						improve_flag = true;
+						global_improve=true;
+					}
 				}
+			}
+			if(i<IdxMaxImpr && improve_flag)
+			{	
+				Tour.twoOptSwap(t, i, IdxMaxImpr,dim);
+				noLook[t[i].getId()] = false;
+				noLook[t[IdxMaxImpr].getId()] = false;
 				
 			}
-			
-			int count=0;
-			for(Integer fn : firstMove)
+			else if(i>IdxMaxImpr && improve_flag)
 			{
-				for(Integer sn : secondMove.get(count))
-				{
-					sort.add(i);
-					sort.add(fn);
-					sort.add(sn);
-					Collections.sort(sort);
-					threeOptSwap(t,sort.get(0),sort.get(1),sort.get(2));
-					sort.clear();
-				}
-				count++;
+				Tour.twoOptSwap(t, IdxMaxImpr, i,dim);				
+				noLook[t[i].getId()] = false;
+				noLook[t[IdxMaxImpr].getId()] = false;
 			}
+			if(improve_flag == false) noLook[t[i].getId()] = true;
 		}
+		return global_improve;
 	}
+	
 	
 	public static void threeOpt(Cliente[] t)
 	{
@@ -613,28 +623,74 @@ public class Tour
 		}
 	}
 	
-	public static void threeOptSwap(Cliente[] t, int inf, int mid, int sup)
+	public static boolean threeOptSwap(Cliente[] t, int first, int second, int third)
 	{
 		int dim= t.length;
-		int prev_length=t[(inf-1+dim)%dim].calculateDistance(t[inf])+t[mid-1].calculateDistance(t[mid])+t[sup-1].calculateDistance(t[sup]);
-		int after_length=t[(inf-1+dim)%dim].calculateDistance(t[mid])+t[mid-1].calculateDistance(t[sup-1])+t[sup].calculateDistance(t[inf]);
+		int prev_length=t[(first-1+dim)%dim].calculateDistance(t[first])+t[second-1].calculateDistance(t[second])+t[third-1].calculateDistance(t[third]);
+		int after_length=t[(first-1+dim)%dim].calculateDistance(t[second])+t[second-1].calculateDistance(t[third-1])+t[third].calculateDistance(t[first]);
 		
 		if(after_length<prev_length)
 		{
 			ArrayList<Cliente> tmp= new ArrayList<Cliente>(Arrays.asList(t));
+			if(first>second || first>third)
+				Collections.rotate(tmp, -first);
+			
 		//	System.out.println(tmp);
-			Collections.reverse(tmp.subList(inf, mid));
-			ArrayList<Cliente> swap= new ArrayList<Cliente>(tmp.subList(mid, sup));
-			tmp.subList(mid, sup).clear();
-			tmp.addAll(inf, swap);
+			Collections.reverse(tmp.subList(first, second));
+			ArrayList<Cliente> swap;
+			swap= new ArrayList<Cliente>(tmp.subList(second, third));
+			tmp.subList(second, third).clear();
+			tmp.addAll(first, swap);
 		//	System.out.println(tmp);
 			tmp.toArray(t);
 		/*	for(Cliente c : t)
 			{
 				System.out.println(c);
 			}*/
+			return true;
 		}
-		
+		return false;
 	}
+	
+	public static boolean fixedRadiusNolook3Opt(Cliente[] t, boolean noLook[])
+	{
+		int dim = t.length;
+		int radius;
+		int second_radius;
+		boolean improve_flag;
+		boolean global_improve=false;
+		for(int i = 1; i < dim; i++)
+		{
+			if(noLook[t[i].getId()] == true) continue;
+			improve_flag = false;
+			radius=t[i].calculateDistance(t[(i-1+dim)%dim]);
+			for(int j=i+1;j<dim;j++)
+			{
+				if(t[(i-1+dim)%dim].calculateDistance(t[j])<radius)
+				{		
+				second_radius=t[i].calculateDistance(t[(i-1+dim)%dim])+t[j].calculateDistance(t[(j-1+dim)%dim]);
+				for(int l=j+1; l<dim; l++)
+				{
+					if(t[(i-1+dim)%dim].calculateDistance(t[j])+t[i].calculateDistance(t[l])<second_radius)
+					{	
+						if(threeOptSwap(t,i,j,l))
+						{
+							noLook[t[i].getId()] = false;
+							noLook[t[j].getId()] = false;
+							noLook[t[l].getId()] = false;
+							improve_flag = true;
+							global_improve=true;
+							break;
+						}
+					}
+				}
+				}
+				if(improve_flag) break;
+			}
+			if(improve_flag==false) noLook[t[i].getId()]=true;
+		}
+		return global_improve;
+	}
+			
 	
 }

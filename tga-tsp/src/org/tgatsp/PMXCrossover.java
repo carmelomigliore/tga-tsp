@@ -2,7 +2,9 @@ package org.tgatsp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class PMXCrossover{
@@ -42,36 +44,48 @@ public class PMXCrossover{
 		Tour offspring1;
 		
 		
-		parents[0]=pop.selectParent(rand);
+		
 		
 		
 		//while(counter<deadlockThreshold)
-		//{
+		//{		
+				/*parents[0]=pop.selectParent(rand);
 				do
 				{
 					parents[1]=pop.selectParent(rand);
 				} while(parents[0]==parents[1]);
-				
-				inf=rand.nextInt(Cliente.listaClienti.length);
-		
-				//verifica che sup!=inf e che sup e inf non siano contemporaneamente agli estremi
-				do
-				{
-					sup = rand.nextInt(Cliente.listaClienti.length);
-				}while(sup==inf || (inf==0 && sup == Cliente.listaClienti.length) || (inf==Cliente.listaClienti.length && sup == 0));
-		
-				if (sup<inf)
-				{
-					temp = inf;
-					inf = sup;
-					sup = temp;
-				}
+				*/
+				//long now=System.currentTimeMillis();
+				//double current=(double)((now-TGA.prima)-TGA.timelimit)/130000.0;
+				//int tournamentSize=(int)(TGA.tournamentCoefficient*(Math.pow(Math.E,current))*TGA.populationSize+1);
+				parents=pop.tournamentSelection(1, rand);
 				parent0=parents[0].getChromosome().getTour().toArray(parent0);
 				parent1=parents[1].getChromosome().getTour().toArray(parent1);
 				
-		
-				offspring1= offspring(parent0, parent1, inf, sup);
-				offspring2= offspring(parent1, parent0, inf, sup);
+				/*if(TGA.currentEpoch<200)
+				{
+					inf=rand.nextInt(Cliente.listaClienti.length);
+					
+					//verifica che sup!=inf e che sup e inf non siano contemporaneamente agli estremi
+					do
+					{
+						sup = rand.nextInt(Cliente.listaClienti.length);
+					}while(sup==inf || (inf==0 && sup == Cliente.listaClienti.length) || (inf==Cliente.listaClienti.length && sup == 0));
+			
+					if (sup<inf)
+					{
+						temp = inf;
+						inf = sup;
+						sup = temp;
+					}
+					offspring1= offspringPMX(parent0, parent1, inf, sup);
+					offspring2= offspringPMX(parent1, parent0, inf, sup);
+				}
+				else*/
+				{
+					offspring1=offspringOX(parent0, parent1, rand);
+					offspring2= offspringOX(parent1, parent0, rand);
+				}
 		
 				ret[0]=new Solution(offspring1,null, 1/(float)offspring1.getlength());
 				ret[1]=new Solution(offspring2,null, 1/(float)offspring2.getlength());
@@ -110,7 +124,7 @@ public class PMXCrossover{
 			}
 		//	counter++;
 		//}
-		if(rand.nextFloat()<0.2)
+		if(rand.nextFloat()<0.5)
 		{
 			ret[0].mutate(rand);
 			ret[1].mutate(rand);
@@ -120,8 +134,151 @@ public class PMXCrossover{
 		
 	}
 	
+	
+	public static Tour offspringOX(Cliente[] parent1, Cliente[] parent2, Random rand)
+	{
+		int cut1= rand.nextInt(parent1.length);
+		int cut2;
+		do
+		{
+			cut2= rand.nextInt(parent1.length);
+		}while(cut1==cut2);
 		
-	public static Tour offspring(Cliente[] parent1, Cliente[] parent2, int inf, int sup)
+		if(cut2<cut1)
+		{
+			int temp=cut1;
+			cut1=cut2;
+			cut2=temp;
+		}
+		
+		Cliente[] off= new Cliente[parent1.length];
+		
+		//From first to second cutpoint
+		for(int j=cut1; j<cut2; j++)
+		{
+			off[j]= parent1[j];
+		}
+		
+		
+		int dim=parent1.length;
+		int i=cut2;
+		for(int j=cut2; j<cut2+dim; j++)
+		{	
+			if((i+dim)%dim==cut1)
+				break;
+			Cliente c= parent2[(j+dim)%dim];
+			boolean contained=false;
+			for(int k=cut1; k<cut2; k++)
+			{
+				if(off[k]==c)
+				{
+					contained=true;
+					break;
+				}
+			}
+			if(!contained)
+			{
+				off[(i+dim)%dim]= c;
+				i++;
+			}
+		}
+		boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
+		
+		for(int k = 0; k< Cliente.listaClienti.length+1; k++)
+		{
+			noLook[k] = false;
+		}
+		
+		boolean again=true;
+		while(again)
+		{
+			again=Tour.fixedRadiusNolookNear(off,noLook);
+		}		
+		
+		return new Tour((new ArrayList<Cliente>(Arrays.asList(off))),null);
+		
+	}
+	
+	public static Tour offspringOX5(Cliente[] parent1, Cliente[] parent2, Random rand)
+	{
+		ArrayList<Integer> ar= new ArrayList<Integer>();
+		for (int i=0; i<4; i++)
+		{
+			Integer random= rand.nextInt(parent1.length);
+			if(!ar.contains(random))
+				ar.add(random);
+			else
+				i--;
+		}
+		Collections.sort(ar);
+		
+		int[] random= new int[4];
+		random[0]=ar.get(0);
+		random[1]=ar.get(1);
+		random[2]=ar.get(2);
+		random[3]=ar.get(3);
+		
+		
+		ArrayList<Cliente> off= new ArrayList<Cliente>(parent1.length);
+		while(off.size() < parent1.length) off.add(null);
+		
+		//From first to second cutpoint
+		for(int j=random[0]; j<random[1]; j++)
+		{
+			off.set(j, parent1[j]);
+		}
+		
+		//From third to fourth cutpoint
+		for(int j=random[2]; j<random[3]; j++)
+		{
+			off.set(j, parent1[j]);
+		}
+		
+		//Copy from parent 2
+		int i=random[3];
+		int dim=parent1.length;
+		for(int j=random[3]; j<random[3]+dim; j++)
+		{	
+			if((i+dim)%dim==random[0])
+				i=random[1];
+			else if((i+dim)%dim==random[2])
+				break;
+			Cliente c= parent2[(j+dim)%dim];
+			if(!off.contains(c))
+			{
+				off.set((i+dim)%dim, c);
+				i++;
+			}
+		}
+		/*for(Cliente c: parent1)
+			System.out.print(c.toString()+", ");
+		System.out.println();
+		System.out.println();
+		for(Cliente c: parent2)
+			System.out.print(c.toString()+", ");
+		System.out.println();
+		System.out.println();
+		System.out.println(off);*/
+		
+		Cliente[] temp = new Cliente[parent1.length];
+		temp=off.toArray(temp);
+		boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
+		
+		for(int k = 0; k< Cliente.listaClienti.length+1; k++)
+		{
+			noLook[k] = false;
+		}
+		
+		boolean again=true;
+		while(again)
+		{
+			again=Tour.fixedRadiusNolookNear(temp,noLook);
+		}		
+		
+		return new Tour((new ArrayList<Cliente>(Arrays.asList(temp))),null);
+	}
+		
+	public static Tour offspringPMX(Cliente[] parent1, Cliente[] parent2, int inf, int sup)
 	{
 		Cliente[] temp = new Cliente[parent1.length];
 		for(int i=inf; i<sup; i++)

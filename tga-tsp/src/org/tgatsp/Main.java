@@ -9,26 +9,26 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		final int populationSize=100;
+		final int populationSize=400;
 		final int maxEpoch=1000;
-		final int deadlockThreshold=100; //TODO deadlock= a popsize
+		final int deadlockThreshold=300; //TODO deadlock= a popsize
 		final float tabuCoefficient=0.0F;
 		final boolean elitism=true;
 		Population pop= new Population(populationSize);
-		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,40,tabuCoefficient,elitism,73682,"prova.txt");
+		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,30,tabuCoefficient,elitism,0,0.3F,400000L,"prova.txt");
 		Cliente.init(args[0]);
 		Cliente.findNearest(20);
-		System.out.println(Cliente.listaClienti[1]);
+		/*System.out.println(Cliente.listaClienti[1]);
 		for(int i=0; i<Cliente.nearest[1].length; i++)
 		{
 			System.out.println(Cliente.nearest[1][i]);
-		}
+		}*/
 		Random rand= new Random(System.currentTimeMillis());
 		
 		//System.out.println(Population.calculateDiversity(disa, diesel));
 		//System.out.println(e.equals(f));
-		
-		/*Population.randomPopulation2Opt(0, 2, pop, rand);
+		/*
+		Population.randomPopulation2Opt(0, 2, pop, rand);
 		Solution s= pop.getPopulation().get(0);
 		Cliente[] c=new Cliente[Cliente.listaClienti.length];
 		Cliente[] d=new Cliente[Cliente.listaClienti.length];
@@ -48,9 +48,17 @@ public class Main {
 		{
 			noLook2[i] = false;
 		}
-		Tour.fixedRadiusNolookNear(c,noLook);
-		//Tour.fixedRadius3Opt(c);
-		Tour.fixedRadiusNolook(d,noLook2);
+		boolean again=true;;
+		while(again)
+		{
+			again=Tour.fixedRadiusNolook(c,noLook);
+		}
+		
+		boolean again2=true;;
+		while(again2)
+		{
+			again2=Tour.fixedRadiusNolookNear(d,noLook2);
+		}
 		Tour.localSearch(e);
 		ArrayList<Cliente> ac = new ArrayList<Cliente>(Arrays.asList(c));
 		ArrayList<Cliente> ad = new ArrayList<Cliente>(Arrays.asList(d));
@@ -63,9 +71,10 @@ public class Main {
 		System.out.println(v.getlength());
 		*/
 	
+	
 		//Population.nearestNeighbour(pop, 0, 10, rand);
 		//Population.nearestNeighbour(pop, 947);
-		Population.randomPopulation2Opt(0, 100, pop, rand);
+		Population.randomPopulation2Opt(0, 400, pop, rand);
 		//System.out.println(pop);
 		algorithm.startEngine();
 		
