@@ -16,26 +16,22 @@ import java.util.StringTokenizer;
 public class Cliente
 {
 	private final int id;
-	private final Coordinates coord;
+	private final double x;
+	private final double y;
 	public static Cliente[] listaClienti;
 	public static Cliente[][] nearest;
 	
 	
-	public Cliente (int id, Coordinates coord)
+	public Cliente (int id, double x, double y)
 	{
 		this.id = id;
-		this.coord = coord;
+		this.x = x;
+		this.y=y;
 	}
 	
 	public int calculateDistance (Cliente target)
 	{
-		Coordinates targetCoord = target.getCoordinates();
-		return (int)(Math.sqrt(Math.pow((this.coord.x - targetCoord.x), 2) + Math.pow((this.coord.y - targetCoord.y), 2))+0.5);	
-	}
-	
-	public Coordinates getCoordinates()
-	{
-		return coord;
+		return (int)(Math.sqrt(Math.pow((this.x - target.x), 2) + Math.pow((this.y - target.y), 2))+0.5);	
 	}
 	
 	public int getId()
@@ -123,7 +119,6 @@ public class Cliente
 				//Lettura a vuoto
 				b.readLine();	
 				Cliente c;
-				Coordinates cr;
 				int k;
 				Cliente.listaClienti=new Cliente[dimension];
 				StringTokenizer st;
@@ -132,8 +127,7 @@ public class Cliente
 					str=b.readLine();
 					st=new StringTokenizer(str);
 					k= Integer.parseInt(st.nextToken());
-					cr=new Coordinates(Float.parseFloat(st.nextToken()),Float.parseFloat(st.nextToken()));
-					c=new Cliente(k,cr);
+					c=new Cliente(k,Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()));
 					Cliente.listaClienti[i]=c;
 					//System.out.println(Cliente.listaClienti[i]);			
 				}

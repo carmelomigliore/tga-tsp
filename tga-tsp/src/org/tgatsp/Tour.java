@@ -541,31 +541,29 @@ public class Tour
 		return global_improve;
 	}
 	
-	
-
-	public static boolean twoOptNolookNear(Cliente[] t, boolean noLook[])
+	public static boolean fixedRadiusNolookNearFirst(Cliente[] t, boolean noLook[])
 	{
 		int dim = t.length;
 		float radius;
 		boolean improve_flag;
 		boolean global_improve=false;
-		int improvement;
+		//int improvement;
 		int index=-1;
-		int IdxMaxImpr=-1;
+		//int IdxMaxImpr=-1;
 		//	int rand = r.nextInt(dim/10);
 		for(int i = 0; i < dim; i++)
 		{
 			if(noLook[t[i].getId()] == true) continue;
 			improve_flag = false;
 			radius=t[i].calculateDistance(t[(i-1+dim)%dim]);
-			improvement=0;
-			IdxMaxImpr=-1;
+			//improvement=0;
+			//IdxMaxImpr=-1;
 			for(int j=0;j<Cliente.nearest[0].length;j++)
 			{
 				index=-1;
-				//if(t[i].calculateDistance(Cliente.nearest[t[i].getId()-1][j])>=radius)
-				//	break;
-				//else
+				if(t[i].calculateDistance(Cliente.nearest[t[i].getId()-1][j])>=radius)
+					break;
+				else
 				{		
 					for(int k=0; k<dim; k++)
 					{
@@ -577,33 +575,36 @@ public class Tour
 					}
 					int prev_edges=t[i].calculateDistance(t[(i-1+dim)%dim])+t[index].calculateDistance(t[(index-1+dim)%dim]);
 					int after_edges=t[(i-1+dim)%dim].calculateDistance(t[(index-1+dim)%dim])+t[i].calculateDistance(t[index]);
-					if(after_edges<prev_edges && (prev_edges-after_edges)>improvement)
+					if(after_edges<prev_edges)
 					{
-						improvement=prev_edges-after_edges;
-						IdxMaxImpr=index;
-						improve_flag = true;
-						global_improve=true;
+						if(i<index)
+						{	
+							Tour.twoOptSwap(t, i, index,dim);
+							noLook[t[i].getId()] = false;
+							noLook[t[index].getId()] = false;
+							improve_flag = true;
+							global_improve=true;
+							break;
+							
+						}
+						else if(i>index)
+						{
+							Tour.twoOptSwap(t, index, i,dim);				
+							noLook[t[i].getId()] = false;
+							noLook[t[index].getId()] = false;
+							improve_flag = true;
+							global_improve=true;
+							break;
+						}
+						
 					}
 				}
 			}
-			if(i<IdxMaxImpr && improve_flag)
-			{	
-				Tour.twoOptSwap(t, i, IdxMaxImpr,dim);
-				noLook[t[i].getId()] = false;
-				noLook[t[IdxMaxImpr].getId()] = false;
-				
-			}
-			else if(i>IdxMaxImpr && improve_flag)
-			{
-				Tour.twoOptSwap(t, IdxMaxImpr, i,dim);				
-				noLook[t[i].getId()] = false;
-				noLook[t[IdxMaxImpr].getId()] = false;
-			}
+			
 			if(improve_flag == false) noLook[t[i].getId()] = true;
 		}
 		return global_improve;
 	}
-	
 	
 	public static void threeOpt(Cliente[] t)
 	{

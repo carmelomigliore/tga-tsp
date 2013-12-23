@@ -241,10 +241,16 @@ public class Population {
 		{
 			TGA.localOptimumBuster.incrementAndGet();
 		}
-		else if(TGA.ConnorMacLeod==null || TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
+		
+		if(TGA.ConnorMacLeod==null || TGA.DuncanMacLeod.getFitness()>TGA.ConnorMacLeod.getFitness())
 		{
-			TGA.ConnorMacLeod=TGA.DuncanMacLeod;
+			TGA.ConnorMacLeod=TGA.DuncanMacLeod;	
 			TGA.localOptimumBuster.set(0);
+		}
+		
+		if(TGA.Richie==null || TGA.ConnorMacLeod.getFitness()>TGA.Richie.getFitness())
+		{
+			TGA.Richie=TGA.ConnorMacLeod;
 		}
 		
 		//System.out.println(evaluateDiversity(this));
@@ -253,8 +259,8 @@ public class Population {
 		if(TGA.localOptimumBuster.get()>TGA.nameccDisasterThreshold) //Namekian disaster
 		{
 			population.clear();
-			population.add(TGA.ConnorMacLeod);   
-			Population.randomPopulation2Opt(1, TGA.populationSize-1, this, rand);
+			Population.randomPopulation2Opt(0, TGA.populationSize, this, rand);
+			TGA.ConnorMacLeod=null;
 			TGA.localOptimumBuster.set(0);
 			population.trimToSize();
 			return;
@@ -496,7 +502,7 @@ public class Population {
 			
 			while(again)
 			{
-				again=Tour.fixedRadiusNolook(t,noLook); //cheat the jit
+				again=Tour.fixedRadiusNolookNear(t,noLook); //cheat the jit
 			}
 			Clan c = new Clan(j,TGA.tabuSize);
 	                //Solution s = new Solution(t,c,null);

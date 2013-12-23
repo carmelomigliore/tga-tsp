@@ -41,7 +41,7 @@ public class TGA {
 	
 	private String logfile;
 	
-	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, int namecc, float tabuCoefficient, boolean elitism, int optimal, float tournamentCoefficient, long timelimit, String logfile)
+	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, int namecc, float tabuCoefficient, boolean elitism, int optimal, float tournamentCoefficient, long timelimit, String logfile, Random rand)
 	{
 		TGA.populationSize=populationSize;
 		TGA.mutationCount=new AtomicInteger();
@@ -55,7 +55,7 @@ public class TGA {
 		TGA.currentEpoch=0;
 		this.maxEpoch=maxEpoch;
 		this.deadlockThreshold=deadlockThreshold;
-		rand = new Random();
+		this.rand = rand;
 		TGA.offspringsPerEpoch=populationSize;
 		TGA.cloneKilled=0;
 		TGA.nameccDisasterThreshold=namecc;
@@ -69,7 +69,7 @@ public class TGA {
 	}
 	
 	
-	public void startEngine()
+	public Solution startEngine()
 	{
 		final PMXCrossover[] cross= new PMXCrossover[offspringsPerEpoch/2];
 		sons=new Population(populationSize);
@@ -121,7 +121,8 @@ public class TGA {
 		//	{
 			System.out.println("\nConnor: "+TGA.ConnorMacLeod+"\nRichie: "+TGA.Richie);
 		//	}
-			
+			//if(TGA.ConnorMacLeod.getChromosome().getlength()<224600)
+				//break;
 			//System.out.println("\n4Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 			/*if(TGA.ConnorMacLeod.getChromosome().getlength().intValue()==optimalLength)
 			{
@@ -144,8 +145,9 @@ public class TGA {
 				
 			currentEpoch++;
 		}
+		return TGA.Richie;
 		
-		if(currentEpoch==maxEpoch)
+		/*if(currentEpoch==maxEpoch)
 		{
 			dopo=System.currentTimeMillis();
 			PrintStream ps=null;
@@ -174,5 +176,6 @@ public class TGA {
 		//System.out.println("\nGlobal optimum:"+TGA.DuncanMacLeod+"Mutation: "+mutationCount+" Tabu: "+tabuCount);
 		*/
 	}
+	
 
 }

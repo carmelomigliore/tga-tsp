@@ -54,17 +54,21 @@ public class PMXCrossover{
 				{
 					parents[1]=pop.selectParent(rand);
 				} while(parents[0]==parents[1]);
-				*/
+				
 				//long now=System.currentTimeMillis();
 				//double current=(double)((now-TGA.prima)-TGA.timelimit)/130000.0;
 				//int tournamentSize=(int)(TGA.tournamentCoefficient*(Math.pow(Math.E,current))*TGA.populationSize+1);
-				parents=pop.tournamentSelection(1, rand);
+				*/
+				if(TGA.currentEpoch<90)
+					parents=pop.tournamentSelection(3, rand);
+				else
+					parents=pop.tournamentSelection(8, rand);
 				parent0=parents[0].getChromosome().getTour().toArray(parent0);
 				parent1=parents[1].getChromosome().getTour().toArray(parent1);
 				
-				/*if(TGA.currentEpoch<200)
-				{
-					inf=rand.nextInt(Cliente.listaClienti.length);
+				//if(TGA.currentEpoch<200)
+				//{
+				/*	inf=rand.nextInt(Cliente.listaClienti.length);
 					
 					//verifica che sup!=inf e che sup e inf non siano contemporaneamente agli estremi
 					do
@@ -80,7 +84,8 @@ public class PMXCrossover{
 					}
 					offspring1= offspringPMX(parent0, parent1, inf, sup);
 					offspring2= offspringPMX(parent1, parent0, inf, sup);
-				}
+			//	}
+				/*
 				else*/
 				{
 					offspring1=offspringOX(parent0, parent1, rand);
@@ -124,7 +129,7 @@ public class PMXCrossover{
 			}
 		//	counter++;
 		//}
-		if(rand.nextFloat()<0.5)
+		if(rand.nextFloat()<0.01)
 		{
 			ret[0].mutate(rand);
 			ret[1].mutate(rand);

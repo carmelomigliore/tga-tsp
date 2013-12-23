@@ -1,21 +1,29 @@
 package org.tgatsp;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Random;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		final int populationSize=400;
-		final int maxEpoch=1000;
-		final int deadlockThreshold=300; //TODO deadlock= a popsize
+		final int populationSize=600; //per quello da mille meglio 600
+		final int maxEpoch=150;
+		final int deadlockThreshold=150; //TODO deadlock= a popsize
 		final float tabuCoefficient=0.0F;
 		final boolean elitism=true;
+//	for(;;)
+	{
 		Population pop= new Population(populationSize);
-		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,30,tabuCoefficient,elitism,0,0.3F,400000L,"prova.txt");
+		long seed=System.currentTimeMillis();
+		System.out.println(seed);
+		//Random rand= new Random(1387807812941L);
+		Random rand= new Random(1387816411881L);
+		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,30,tabuCoefficient,elitism,0,0.3F,400000L,"prova.txt", rand);
+		TGA.Richie=null;
 		Cliente.init(args[0]);
 		Cliente.findNearest(20);
 		/*System.out.println(Cliente.listaClienti[1]);
@@ -23,7 +31,7 @@ public class Main {
 		{
 			System.out.println(Cliente.nearest[1][i]);
 		}*/
-		Random rand= new Random(System.currentTimeMillis());
+		
 		
 		//System.out.println(Population.calculateDiversity(disa, diesel));
 		//System.out.println(e.equals(f));
@@ -72,12 +80,25 @@ public class Main {
 		*/
 	
 	
-		//Population.nearestNeighbour(pop, 0, 10, rand);
+		//Population.nearestNeighbour(pop, 0, 100, rand);
 		//Population.nearestNeighbour(pop, 947);
-		Population.randomPopulation2Opt(0, 400, pop, rand);
+		Population.randomPopulation2Opt(0, 600, pop, rand);
 		//System.out.println(pop);
-		algorithm.startEngine();
-		
+		Solution best=algorithm.startEngine();
+		PrintStream ps=null;
+		try {
+			ps=new PrintStream(new FileOutputStream("seed.txt",true));
+			ps.println("\nLength: "+best.getChromosome().getlength()+". "+"Seed: "+seed);
+			ps.close();		
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			if(ps!=null)
+			ps.close();
+			}
+	}
 		/*Test t=new Test();
 		t.eil51();
 		t.eil76();
