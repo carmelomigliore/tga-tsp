@@ -8,7 +8,7 @@ public class Solution implements Comparable<Solution>{
 	
 	private final Tour chromosome;
 	private Clan clan;
-	private Float fitness;
+	private float fitness;
 	private Float window; //used for both parents selection and survival methods
 	private boolean killingFlag;
 	
@@ -17,11 +17,6 @@ public class Solution implements Comparable<Solution>{
 		chromosome=t;
 		clan=c;
 		this.fitness=fitness;
-	}
-	
-	public Tour clonechromosome()
-	{
-		return (Tour)chromosome.copy();
 	}
 	
 	public Tour getChromosome()
@@ -46,7 +41,7 @@ public class Solution implements Comparable<Solution>{
 	
 	public Float getFitness()
 	{
-		if(fitness!=null)
+		if(fitness!=-1)
 			return fitness;
 		else
 		{
@@ -126,7 +121,7 @@ public class Solution implements Comparable<Solution>{
 	public boolean equals(Object obj)
 	{
 		Solution s= (Solution)obj;
-		if(s==null || !this.fitness.equals(s.fitness))
+		if(s==null || !(this.fitness==s.fitness))
 			return false;
 		else
 			return true;

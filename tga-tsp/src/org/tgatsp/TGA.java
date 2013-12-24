@@ -85,7 +85,7 @@ public class TGA {
 		long dopo=0;
 		while(currentEpoch<maxEpoch)
 		{
-			currentPopulation.evaluate();
+			//currentPopulation.evaluate();
 			//if(currentEpoch==0)
 			//TGA.ConnorMacLeod=TGA.DuncanMacLeod;
 			//System.out.println("\n1Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));

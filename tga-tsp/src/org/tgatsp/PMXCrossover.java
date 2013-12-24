@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Random;
 
 public class PMXCrossover{
@@ -12,7 +11,6 @@ public class PMXCrossover{
 	private Population pop;
 	//private final ExecutorService pool;
 	private Random rand;
-	private final int deadlockThreshold;
 	private Solution[] parents;
 	private final Solution ret[];
 	private Cliente[] parent0;
@@ -21,7 +19,6 @@ public class PMXCrossover{
 	public PMXCrossover(int deadlockThreshold, Random rand)
 	{
 		this.rand=rand;
-		this.deadlockThreshold=deadlockThreshold;
 		this.parents= new Solution[2];
 		this.ret= new Solution[2];
 		this.parent0=new Cliente[Cliente.listaClienti.length];
@@ -36,10 +33,6 @@ public class PMXCrossover{
 	
 	public Solution[] call()
 	{
-		int inf; 
-		int sup;
-		int temp;
-		int counter=0;
 		Tour offspring2;
 		Tour offspring1;
 		
@@ -59,10 +52,17 @@ public class PMXCrossover{
 				//double current=(double)((now-TGA.prima)-TGA.timelimit)/130000.0;
 				//int tournamentSize=(int)(TGA.tournamentCoefficient*(Math.pow(Math.E,current))*TGA.populationSize+1);
 				*/
-				if(TGA.currentEpoch<90)
-					parents=pop.tournamentSelection(3, rand);
+				if(Cliente.listaClienti.length<400)
+				{
+					parents=pop.tournamentSelection(1, rand);
+				}
 				else
-					parents=pop.tournamentSelection(8, rand);
+				{
+					if(TGA.currentEpoch<90)
+						parents=pop.tournamentSelection(3, rand);
+					else
+						parents=pop.tournamentSelection(3, rand);
+				}
 				parent0=parents[0].getChromosome().getTour().toArray(parent0);
 				parent1=parents[1].getChromosome().getTour().toArray(parent1);
 				
@@ -156,7 +156,7 @@ public class PMXCrossover{
 			cut2=temp;
 		}
 		
-		Cliente[] off= new Cliente[parent1.length];
+		final Cliente[] off= new Cliente[parent1.length];
 		
 		//From first to second cutpoint
 		for(int j=cut1; j<cut2; j++)
@@ -200,7 +200,7 @@ public class PMXCrossover{
 			again=Tour.fixedRadiusNolookNear(off,noLook);
 		}		
 		
-		return new Tour((new ArrayList<Cliente>(Arrays.asList(off))),null);
+		return new Tour((new ArrayList<Cliente>(Arrays.asList(off))),-1);
 		
 	}
 	
@@ -280,7 +280,7 @@ public class PMXCrossover{
 			again=Tour.fixedRadiusNolookNear(temp,noLook);
 		}		
 		
-		return new Tour((new ArrayList<Cliente>(Arrays.asList(temp))),null);
+		return new Tour((new ArrayList<Cliente>(Arrays.asList(temp))),-1);
 	}
 		
 	public static Tour offspringPMX(Cliente[] parent1, Cliente[] parent2, int inf, int sup)
@@ -352,7 +352,7 @@ public class PMXCrossover{
 		//System.out.println(t.getlength());
 		//for(int i=0; i<5; i++)
 		//	Tour.fixedRadius3Opt(temp);
-		return new Tour(new ArrayList<Cliente>(Arrays.asList(temp)),null);	
+		return new Tour(new ArrayList<Cliente>(Arrays.asList(temp)),-1);	
 		//Tour s=new Tour(new ArrayList<Cliente>(Arrays.asList(temp)),null);
 		//System.out.println(s.getlength());
 		//return s;

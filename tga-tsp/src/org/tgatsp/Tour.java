@@ -7,21 +7,21 @@ public class Tour
 {
 	private final ArrayList<Cliente> tour;
 	private Set<Edge> edges;
-	private Integer length;
+	private int length;
 	
 	
 	public Tour (int size)
 	{
 		this.tour = new ArrayList<Cliente>(size);
 		while(tour.size() < size) tour.add(null);
+		length=-1;
 		edges=null;
 	}
 	
-	public Tour (ArrayList<Cliente> t, Integer length)
+	public Tour (ArrayList<Cliente> t, int length)
 	{
 		this.tour=t;
 		this.length=length;
-		this.edges=null;
 	}
 	
 	public Tour (Tour t)
@@ -31,45 +31,6 @@ public class Tour
 		this.edges=t.edges;
 	}
 	
-
-	public Set<Edge> calculateEdges()
-	{
-		Set<Edge> temp=new HashSet<Edge>(Cliente.listaClienti.length);
-		for(int i=0; i<Cliente.listaClienti.length-1; i++)
-		{
-			temp.add(new Edge(tour.get(i).getId(), tour.get(i+1).getId()));
-		}
-		temp.add(new Edge(tour.get(Cliente.listaClienti.length-1).getId(), tour.get(0).getId()));
-		return temp;
-	}
-	
-	public Set<Edge> getEdges()
-	{
-		if(edges!=null)
-			return edges;
-		else
-		{
-			edges=calculateEdges();
-			return edges;
-		}
-	}
-	
-	public static int calculateDiversity(Set<Edge> first, Set<Edge> second)
-	{
-		Set<Edge> temp= new HashSet<Edge>(first);
-		temp.retainAll(second); //intersection
-		return temp.size();
-	}
-	
-	public Tour copy()
-	{ 
-		ArrayList <Cliente> temp = new ArrayList<Cliente>(tour.size());
-		for (Iterator<Cliente> it= tour.iterator(); it.hasNext();)
-		{
-			temp.add(it.next());
-		}
-		return new Tour (temp, null);
-	}
 	
 	public void addCliente(Cliente c)
 	{
@@ -127,9 +88,9 @@ public class Tour
 		length= new Integer(temp);	
 	}
 	
-	public Integer getlength()
+	public int getlength()
 	{
-		if (length!=null)
+		if (length!=-1)
 		{
 			return length;
 		}
@@ -157,7 +118,7 @@ public class Tour
 	
 	public void markToRecalculate()
 	{
-		this.length = null;
+		this.length = -1;
 	}
 	
 	@Override

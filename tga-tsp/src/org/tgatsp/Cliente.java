@@ -31,7 +31,7 @@ public class Cliente
 	
 	public int calculateDistance (Cliente target)
 	{
-		return (int)(Math.sqrt(Math.pow((this.x - target.x), 2) + Math.pow((this.y - target.y), 2))+0.5);	
+		return (int)(Math.sqrt((this.x - target.x)*(this.x - target.x) + (this.y - target.y)*(this.y - target.y))+0.5);	
 	}
 	
 	public int getId()

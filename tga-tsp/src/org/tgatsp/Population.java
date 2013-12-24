@@ -119,7 +119,6 @@ public class Population {
 	public void evaluate()
 	{
 		calculateFitnessSum();
-		calculateDuncan();
 		population.get(0).setWindow(population.get(0).getFitness()/sumFitness);
 		for(int i=1; i<population.size(); i++)
 		{
@@ -176,57 +175,6 @@ public class Population {
 			if(i==population.size())
 				i--;
 		return population.get(i);
-	}
-
-	
-	public Solution[] selectParentsDiversity(Random rand)
-	{
-		float random;
-		Solution[] parents=new Solution[2];
-		int i=0;
-		random=rand.nextFloat();
-		for(i=0; i<population.size(); i++)
-		{
-			if(population.get(i).getWindow()>random)
-			{
-				break;
-			}
-		}
-		if(i==population.size())
-			i--;
-		
-		parents[0]=population.get(i);
-		int edgesInCommon=Integer.MAX_VALUE;
-		Set <Edge> temp = new HashSet<Edge>(Cliente.listaClienti.length);
-		Solution min=null;
-		for(Solution s : population)
-		{
-			if(parents[0]!=s)
-			{
-				temp.addAll(s.getChromosome().getEdges());
-				temp.retainAll(parents[0].getChromosome().getEdges());
-				if(temp.size()<edgesInCommon)
-				{
-					edgesInCommon=temp.size();
-					min=s;
-				}
-			}
-			temp.clear();
-		}
-		parents[1]=min;
-		return parents;
-	}
-	
-	public Solution checkLength(Solution s)
-	{
-		for (Solution sol : population)
-		{
-			if(sol.getChromosome().getlength().equals(s.getChromosome().getlength()))
-			{
-				return sol;
-			}
-		}
-		return null;
 	}
 	
 	
@@ -348,7 +296,8 @@ public class Population {
 	{
 		this.population.ensureCapacity(this.getSize()+newGeneration.getSize());
 		this.population.addAll(this.getSize(), newGeneration.getPopulation());
-		calculateDuncan(); //We set the new Highlander
+		Collections.sort(population);
+		TGA.DuncanMacLeod=population.get(0); //We set the new Highlander
 		//int DuncanLength=TGA.DuncanMacLeod.getChromosome().getlength();
 		//int ConnorLength=TGA.ConnorMacLeod==null?Integer.MAX_VALUE:TGA.ConnorMacLeod.getChromosome().getlength();
 		if(TGA.DuncanMacLeod==TGA.ConnorMacLeod)
@@ -379,7 +328,6 @@ public class Population {
 			population.trimToSize();
 			return;
 		}
-		Collections.sort(population);
 		population=new ArrayList<Solution>(population.subList(0, newGeneration.getSize()));	
 	}
 	
@@ -437,7 +385,7 @@ public class Population {
 				again=Tour.fixedRadiusNolookNear(t,noLook); //cheat the jit
 			}
 			//System.out.println("\n"+t.getlength());
-			Tour tour= new Tour(new ArrayList<Cliente>(Arrays.asList(t)),null);
+			Tour tour= new Tour(new ArrayList<Cliente>(Arrays.asList(t)),-1);
 			Solution s = new Solution(tour,c,1/(float)tour.getlength());
 			//System.out.println(s);
 			p.addSolution(s);
@@ -508,7 +456,7 @@ public class Population {
 	                //Solution s = new Solution(t,c,null);
 			//System.out.println(s.toString());
 			//p.addSolution(s);
-			Solution s=new Solution(new Tour(new ArrayList<Cliente>(Arrays.asList(t)),null),c,null);
+			Solution s=new Solution(new Tour(new ArrayList<Cliente>(Arrays.asList(t)),-1),c,-1f);
 			//System.out.println(s);
 			p.addSolution(s);
 			j++;
@@ -572,28 +520,6 @@ public class Population {
 		Solution sol=new Solution(t,c,null);
 		p.addSolution(sol);
 	}*/
-	
-	private int evaluateDiversity(Population p)
-	{
-		ArrayList<Set<Edge>> edges= new ArrayList<Set<Edge>>(p.getSize());
-		Set<Edge> temp;
-		for(Solution s : p.getPopulation())
-		{
-			temp=new HashSet<Edge>(Cliente.listaClienti.length);
-			
-			edges.add(temp);
-		}
-		int diversity=0;
-		for(int i=0; i<edges.size(); i++)
-		{
-			for(int j=i+1; j<edges.size(); j++)
-			{
-				diversity+=Tour.calculateDiversity(edges.get(i), edges.get(j));
-			}
-		}
-		
-		return diversity;
-	}
 	
 	
 }

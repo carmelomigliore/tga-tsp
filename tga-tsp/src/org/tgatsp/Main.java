@@ -10,22 +10,30 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		final int populationSize=600; //per quello da mille meglio 600
 		final int maxEpoch=150;
 		final int deadlockThreshold=150; //TODO deadlock= a popsize
 		final float tabuCoefficient=0.0F;
 		final boolean elitism=true;
 //	for(;;)
 	{
-		Population pop= new Population(populationSize);
+		
 		long seed=System.currentTimeMillis();
 		System.out.println(seed);
-		//Random rand= new Random(1387807812941L);
-		Random rand= new Random(1387816411881L);
-		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,30,tabuCoefficient,elitism,0,0.3F,400000L,"prova.txt", rand);
-		TGA.Richie=null;
+		//Random rand= new Random(1387807812941L); //600
+		//Random rand= new Random(1387816411881L); //600
+		//Random rand= new Random(1387842593170L);
+		Random rand= new Random(1387847858433L);
 		Cliente.init(args[0]);
 		Cliente.findNearest(20);
+		final int populationSize;
+		if(Cliente.listaClienti.length>400)
+			populationSize=Cliente.listaClienti.length; //per quello da mille meglio 600
+		else
+			populationSize=350;
+		Population pop= new Population(populationSize);
+		TGA algorithm=new TGA(pop,populationSize,maxEpoch,deadlockThreshold,300,tabuCoefficient,elitism,0,0.3F,400000L,"prova.txt", rand);
+		TGA.Richie=null;
+		
 		/*System.out.println(Cliente.listaClienti[1]);
 		for(int i=0; i<Cliente.nearest[1].length; i++)
 		{
@@ -82,13 +90,13 @@ public class Main {
 	
 		//Population.nearestNeighbour(pop, 0, 100, rand);
 		//Population.nearestNeighbour(pop, 947);
-		Population.randomPopulation2Opt(0, 600, pop, rand);
+		Population.randomPopulation2Opt(0, populationSize, pop, rand);
 		//System.out.println(pop);
 		Solution best=algorithm.startEngine();
 		PrintStream ps=null;
 		try {
 			ps=new PrintStream(new FileOutputStream("seed.txt",true));
-			ps.println("\nLength: "+best.getChromosome().getlength()+". "+"Seed: "+seed);
+			System.out.println("\nLength: "+best.getChromosome().getlength()+". "+"Seed: "+seed);
 			ps.close();		
 			
 		} catch (FileNotFoundException e) {
