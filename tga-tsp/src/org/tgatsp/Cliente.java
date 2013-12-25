@@ -42,16 +42,19 @@ public class Cliente
 	@Override
 	public boolean equals(Object obj)
 	{
-		Cliente c = (Cliente)obj;
-		if (c==null || this.id!=c.id)
+		if(obj==null)
 			return false;
-		else
+		
+		Cliente c = (Cliente)obj;
+		if (this==obj || this.id==c.id)
 			return true;
+		else
+			return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return id;
+	    return this.id;
 	}
 	
 	public String toString()

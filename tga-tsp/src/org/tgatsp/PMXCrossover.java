@@ -4,23 +4,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class PMXCrossover{
 
 	private Population pop;
 	//private final ExecutorService pool;
 	private Random rand;
-	private Solution[] parents;
-	private final Solution ret[];
+	private Tour[] parents;
+	private final Tour ret[];
 	private Cliente[] parent0;
 	private Cliente[] parent1;
 	
 	public PMXCrossover(int deadlockThreshold, Random rand)
 	{
 		this.rand=rand;
-		this.parents= new Solution[2];
-		this.ret= new Solution[2];
+		this.parents= new Tour[2];
+		this.ret= new Tour[2];
 		this.parent0=new Cliente[Cliente.listaClienti.length];
 		this.parent1=new Cliente[Cliente.listaClienti.length];
 	}
@@ -31,7 +33,7 @@ public class PMXCrossover{
 	}
 
 	
-	public Solution[] call()
+	public Tour[] call()
 	{
 		Tour offspring2;
 		Tour offspring1;
@@ -63,8 +65,8 @@ public class PMXCrossover{
 					else
 						parents=pop.tournamentSelection(3, rand);
 				}
-				parent0=parents[0].getChromosome().getTour().toArray(parent0);
-				parent1=parents[1].getChromosome().getTour().toArray(parent1);
+				parent0=parents[0].getTour();
+				parent1=parents[1].getTour();
 				
 				//if(TGA.currentEpoch<200)
 				//{
@@ -92,43 +94,11 @@ public class PMXCrossover{
 					offspring2= offspringOX(parent1, parent0, rand);
 				}
 		
-				ret[0]=new Solution(offspring1,null, 1/(float)offspring1.getlength());
-				ret[1]=new Solution(offspring2,null, 1/(float)offspring2.getlength());
+				ret[0]=offspring1;
+				ret[1]=offspring2;
 				//Tour.localSearch(ret[0].getChromosome());
 			
-			if(TGA.tabuSize!=0)
-			{
-				//controllo tabu
-				Integer idclan0=parents[0].getClan().getId();
-				Integer idclan1=parents[1].getClan().getId();
-				if(!(((parents[0].getClan().isTabu(idclan1))) || (parents[1].getClan().isTabu(idclan0))))
-				{
-					
-					//Tour.localSearch(ret[0].getChromosome());
-					//Tour.localSearch(ret[1].getChromosome());
-						parents[0].getClan().addTabu(idclan1);
-						ret[0].setClan(parents[0].getClan().copy());
-						parents[1].getClan().addTabu(idclan0);
-						ret[1].setClan(parents[1].getClan().copy());
-						return ret;
-					
-					
-				}
-				//else
-				//aspiration criteria
-				if(ret[0].getFitness()>TGA.DuncanMacLeod.getFitness() || ret[1].getFitness()>TGA.DuncanMacLeod.getFitness())
-				{
-					
-					parents[0].getClan().addTabu(idclan1);
-					ret[0].setClan(parents[0].getClan().copy());
-					parents[1].getClan().addTabu(idclan0);
-					ret[1].setClan(parents[1].getClan().copy());
-					TGA.tabuCount.incrementAndGet();
-					return ret;
-				}
-			}
-		//	counter++;
-		//}
+			
 		if(rand.nextFloat()<0.01)
 		{
 			ret[0].mutate(rand);
@@ -159,11 +129,12 @@ public class PMXCrossover{
 		final Cliente[] off= new Cliente[parent1.length];
 		
 		//From first to second cutpoint
-		for(int j=cut1; j<cut2; j++)
+		/*for(int j=cut1; j<cut2; j++)
 		{
 			off[j]= parent1[j];
-		}
-		
+		}*/
+		System.arraycopy(parent1, cut1, off, cut1, cut2-cut1);
+		HashSet<Cliente> hs = new HashSet<Cliente>(Arrays.asList(off));
 		
 		int dim=parent1.length;
 		int i=cut2;
@@ -172,7 +143,7 @@ public class PMXCrossover{
 			if((i+dim)%dim==cut1)
 				break;
 			Cliente c= parent2[(j+dim)%dim];
-			boolean contained=false;
+			/*boolean contained=false;
 			for(int k=cut1; k<cut2; k++)
 			{
 				if(off[k]==c)
@@ -180,8 +151,8 @@ public class PMXCrossover{
 					contained=true;
 					break;
 				}
-			}
-			if(!contained)
+			}*/
+			if(!hs.contains(c))
 			{
 				off[(i+dim)%dim]= c;
 				i++;
@@ -200,7 +171,7 @@ public class PMXCrossover{
 			again=Tour.fixedRadiusNolookNear(off,noLook);
 		}		
 		
-		return new Tour((new ArrayList<Cliente>(Arrays.asList(off))),-1);
+		return new Tour(off,-1);
 		
 	}
 	
@@ -280,7 +251,7 @@ public class PMXCrossover{
 			again=Tour.fixedRadiusNolookNear(temp,noLook);
 		}		
 		
-		return new Tour((new ArrayList<Cliente>(Arrays.asList(temp))),-1);
+		return new Tour(temp,-1);
 	}
 		
 	public static Tour offspringPMX(Cliente[] parent1, Cliente[] parent2, int inf, int sup)
@@ -352,7 +323,7 @@ public class PMXCrossover{
 		//System.out.println(t.getlength());
 		//for(int i=0; i<5; i++)
 		//	Tour.fixedRadius3Opt(temp);
-		return new Tour(new ArrayList<Cliente>(Arrays.asList(temp)),-1);	
+		return new Tour(temp,-1);	
 		//Tour s=new Tour(new ArrayList<Cliente>(Arrays.asList(temp)),null);
 		//System.out.println(s.getlength());
 		//return s;

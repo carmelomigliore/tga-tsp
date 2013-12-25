@@ -3,36 +3,47 @@ package org.tgatsp;
 
 import java.util.*;
 
-public class Tour
+public class Tour implements Comparable<Tour>
 {
-	private final ArrayList<Cliente> tour;
-	private Set<Edge> edges;
+	private final Cliente[] tour;
 	private int length;
-	
+	private float fitness;
+	private float window;
+	private boolean killingFlag;
 	
 	public Tour (int size)
 	{
-		this.tour = new ArrayList<Cliente>(size);
-		while(tour.size() < size) tour.add(null);
+		this.tour = new Cliente[size];
+		//while(tour.size() < size) tour.add(null);
 		length=-1;
-		edges=null;
+		fitness=-1;
 	}
 	
-	public Tour (ArrayList<Cliente> t, int length)
+	public Tour (Cliente[] t, int length)
 	{
 		this.tour=t;
 		this.length=length;
+		this.fitness=1/(float)length;
 	}
 	
-	public Tour (Tour t)
+	/*public Tour (Tour t)
 	{
 		this.tour=new ArrayList<Cliente>(t.getTour());
 		this.length=t.length;
-		this.edges=t.edges;
+	}*/
+	
+	public int compareTo(Tour o)
+	{
+		if(this.length!=-1 && o.length!=-1)
+			return this.length-o.length;
+		else if(this.length!=-1)
+			return this.length-o.getlength();
+		else if(o.length!=-1)
+			return this.getlength()-o.length;
+		return this.getlength()-o.getlength();
 	}
 	
-	
-	public void addCliente(Cliente c)
+	/*public void addCliente(Cliente c)
 	{
 		if(!tour.contains(c))
 		{
@@ -42,9 +53,9 @@ public class Tour
 		{
 			throw new RuntimeException("Customer already present in tour");
 		}
-	}
+	}*/
 	
-	public void addCliente(int i, Cliente c)
+	/*public void addCliente(int i, Cliente c)
 	{
 		if(!tour.contains(c))
 		{
@@ -54,9 +65,9 @@ public class Tour
 		{
 			throw new RuntimeException("Customer already present in tour");
 		}
-	}
+	}*/
 	
-	public void setCliente(int i, Cliente c)
+	/*public void setCliente(int i, Cliente c)
 	{
 		tour.set(i,c);
 	}
@@ -74,18 +85,18 @@ public class Tour
 	public Cliente getCliente(int i)
 	{
 		return tour.get(i);
-	}
+	}*/
 	
 	private void calculatelength()
 	{
 		int temp =0;
 		int i;
-		for(i=1; i<tour.size(); i++)
+		for(i=1; i<tour.length; i++)
 		{
-			temp+=tour.get(i).calculateDistance(tour.get(i-1));    // Distance between i and i-1
+			temp+=tour[i].calculateDistance(tour[i-1]);    // Distance between i and i-1
 		}
-		temp+=tour.get(i-1).calculateDistance(tour.get(0)); //Distanza tra l'ultimo ed il primo
-		length= new Integer(temp);	
+		temp+=tour[i-1].calculateDistance(tour[0]); //Distanza tra l'ultimo ed il primo
+		length= temp;	
 	}
 	
 	public int getlength()
@@ -101,17 +112,44 @@ public class Tour
 		}
 	}
 	
-	public void subLength(Integer sub)
+	public float getFitness()
 	{
-		this.length-=sub;
+		if(fitness!=-1)
+			return fitness;
+		else if(length!=-1)
+		{
+			fitness=1/(float)length;
+			return fitness;
+		}
+		else
+		{
+			calculatelength();
+			fitness=1/(float)length;
+			return fitness;
+		}
 	}
 	
-	public void setFitness(Integer length)
+	public void setWindow(Float window)
 	{
-		this.length=length;
+		this.window=window;
 	}
 	
-	public ArrayList<Cliente> getTour()
+	public Float getWindow()
+	{
+		return window;
+	}
+	
+	public void setKillingFlag(boolean flag)
+	{
+		this.killingFlag=flag;
+	}
+	
+	public boolean getKillingFlag()
+	{
+		return killingFlag;
+	}
+	
+	public Cliente[] getTour()
 	{
 		return tour;
 	}
@@ -135,14 +173,49 @@ public class Tour
 	    return 0;
 	}
 	
+	public void mutate(Random rand)
+	{
+		
+		int customerToDisplace = rand.nextInt(this.tour.length);
+		int insertionPosition;
+		do
+		{
+			insertionPosition = rand.nextInt(this.tour.length);
+			
+		} while (insertionPosition == customerToDisplace);
+		if(insertionPosition>customerToDisplace)
+		{
+			Cliente temp = tour[customerToDisplace];
+			for(int i=customerToDisplace; i<insertionPosition; i++)
+			{
+				tour[i]=tour[i+1];
+			}
+			tour[insertionPosition]=temp;
+		}
+		else
+		{
+			Cliente temp = tour[customerToDisplace];
+			for(int i=customerToDisplace; i>insertionPosition; i--)
+			{
+				tour[i]=tour[i-1];
+			}
+			tour[insertionPosition]=temp;
+		}
+		TGA.mutationCount++;
+		//System.out.println(chromosome);
+		//Cliente c = this.removeCliente(customerToDisplace);
+		//this.insertCliente(insertionPosition, c);
+		//System.out.println(chromosome);
+	}
+	
 	public int getSize()
 	{
-		return tour.size();
+		return tour.length;
 	}
 	
 	public String toString()
 	{
-		return tour.toString();
+		return ""+length;
 	}
 	
 	public static void localSearch(Cliente[] t)
@@ -159,7 +232,7 @@ public class Tour
 		
 	}
 	
-	 public static void twoOpt(Tour t, int inf, int sup)
+/*	 public static void twoOpt(Tour t, int inf, int sup)
      {
 
              Integer len_prec = t.getlength();
@@ -194,7 +267,7 @@ public class Tour
                      //twopt.twoOptc(t, r);
              }
                              
-     }
+     }*/
 		
 	 
 	 /*2-opt sbagliato, ma migliore!!!*/
@@ -280,27 +353,20 @@ public class Tour
 				
 	}
 	
-	public static void twoOptSwap(Cliente[] t, int inf, int sup, int dim)
+	public static void twoOptSwap(Cliente[] t, int i, int IdxMaxImpr, int dim)
 	{
 			
-			Cliente[] temporaneo = new Cliente[sup-inf+2];			
-			temporaneo[0]=t[(inf-1+dim)%dim];
+		for (int j = i; j < i +((IdxMaxImpr-i)/2); j++) 
+		{
+			  Cliente temp = t[j];
+			  t[j] = t[IdxMaxImpr +i  - 1 - j];
+			  t[IdxMaxImpr+i - 1 - j] = temp;
+		}
 			
-			for(int j=0; j<sup-inf; j++)
-			{
-				temporaneo[j+1]= t[sup-j-1];
-			}
-			
-			temporaneo[sup-inf+1]=t[sup];
-			
-			for(int k = inf; k<=sup; k++)
-			{
-				t[k]=temporaneo[k-inf+1];
-			}
 			
 	}
 	
-	public static void twoOptSublist(Tour t, int inf, int sup, int dim)
+	/*public static void twoOptSublist(Tour t, int inf, int sup, int dim)
 	{
 
 		Integer len_prev_edges = t.getCliente(inf).calculateDistance(t.getCliente((inf-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente((sup-1+dim)%dim));
@@ -336,7 +402,7 @@ public class Tour
 			//for(Cliente c : temporaneo)
 			//System.out.println(c);
 			
-		len_new_edges= t.getCliente((inf-1+dim)%dim).calculateDistance(t.getCliente((sup-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente(inf));
+	/*	len_new_edges= t.getCliente((inf-1+dim)%dim).calculateDistance(t.getCliente((sup-1+dim)%dim))+t.getCliente(sup).calculateDistance(t.getCliente(inf));
 		
 		if(len_new_edges<len_prev_edges)
 		{
@@ -350,13 +416,13 @@ public class Tour
 			{
 				t.setCliente(k+inf,temporaneo[sup-inf-k]);
 			}
-			*/
+			
 			
 			t.markToRecalculate();
 			//twopt.twoOptc(t, r);
 		}
 				
-	}
+	}*/
 	
 	public static boolean fixedRadius(Cliente[] t)
 	{
@@ -484,20 +550,26 @@ public class Tour
 					}
 				}
 			}
-			if(i<IdxMaxImpr && improve_flag)
+			if(improve_flag)
 			{	
-				Tour.twoOptSwap(t, i, IdxMaxImpr,dim);
+				if(i>IdxMaxImpr)
+				{
+					int temp=i;
+					i=IdxMaxImpr;
+					IdxMaxImpr=temp;
+				}
+				for (int j = i; j < i +((IdxMaxImpr-i)/2); j++) 
+				{
+					  Cliente temp = t[j];
+					  t[j] = t[IdxMaxImpr +i  - 1 - j];
+					  t[IdxMaxImpr+i - 1 - j] = temp;
+				}
 				noLook[t[i].getId()] = false;
 				noLook[t[IdxMaxImpr].getId()] = false;
 				
 			}
-			else if(i>IdxMaxImpr && improve_flag)
-			{
-				Tour.twoOptSwap(t, IdxMaxImpr, i,dim);				
-				noLook[t[i].getId()] = false;
-				noLook[t[IdxMaxImpr].getId()] = false;
-			}
-			if(improve_flag == false) noLook[t[i].getId()] = true;
+			else
+				noLook[t[i].getId()] = true;
 		}
 		return global_improve;
 	}

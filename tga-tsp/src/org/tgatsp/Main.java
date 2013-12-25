@@ -22,12 +22,13 @@ public class Main {
 		//Random rand= new Random(1387807812941L); //600
 		//Random rand= new Random(1387816411881L); //600
 		//Random rand= new Random(1387842593170L);
-		Random rand= new Random(1387847858433L);
+		Random rand= new Random(1387901792703L);
 		Cliente.init(args[0]);
 		Cliente.findNearest(20);
 		final int populationSize;
 		if(Cliente.listaClienti.length>400)
 			populationSize=Cliente.listaClienti.length; //per quello da mille meglio 600
+			//populationSize=1600;
 		else
 			populationSize=350;
 		Population pop= new Population(populationSize);
@@ -92,11 +93,11 @@ public class Main {
 		//Population.nearestNeighbour(pop, 947);
 		Population.randomPopulation2Opt(0, populationSize, pop, rand);
 		//System.out.println(pop);
-		Solution best=algorithm.startEngine();
+		Tour best=algorithm.startEngine();
 		PrintStream ps=null;
 		try {
 			ps=new PrintStream(new FileOutputStream("seed.txt",true));
-			System.out.println("\nLength: "+best.getChromosome().getlength()+". "+"Seed: "+seed);
+			System.out.println("\nLength: "+best.getlength()+". "+"Time: "+(System.currentTimeMillis()-seed));
 			ps.close();		
 			
 		} catch (FileNotFoundException e) {

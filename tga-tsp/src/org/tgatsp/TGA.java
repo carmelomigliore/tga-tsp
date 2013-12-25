@@ -12,14 +12,13 @@ public class TGA {
 	public static String comment;	
 	//private ExecutorService pool;
 	//private ExecutorService secondPool;
-	public static Solution DuncanMacLeod; //Global Maximum - The Immortal
-	public static Solution ConnorMacLeod; //The old Highlander
-	public static Solution Richie;
-	public final static Solution[] highlanders = new Solution[10];
+	public static Tour DuncanMacLeod; //Global Maximum - The Immortal
+	public static Tour ConnorMacLeod; //The old Highlander
+	public static Tour Richie;
+	public final static Tour[] highlanders = new Tour[10];
 	public final static int highlandersDimension=10;
-	public static AtomicInteger mutationCount;
-	public static AtomicInteger tabuCount;
-	public static AtomicInteger localOptimumBuster;
+	public static int mutationCount;
+	public static int localOptimumBuster;
 	public static boolean elitism;
 	public static int currentEpoch;
 	private Population currentPopulation;
@@ -44,11 +43,10 @@ public class TGA {
 	public TGA (Population p, int populationSize, int maxEpoch, int deadlockThreshold, int namecc, float tabuCoefficient, boolean elitism, int optimal, float tournamentCoefficient, long timelimit, String logfile, Random rand)
 	{
 		TGA.populationSize=populationSize;
-		TGA.mutationCount=new AtomicInteger();
+		TGA.mutationCount=0;
 		TGA.tabuCoefficient=tabuCoefficient;
 		TGA.tabuSize=(int)(TGA.tabuCoefficient*TGA.populationSize);
-		TGA.tabuCount=new AtomicInteger();
-		TGA.localOptimumBuster=new AtomicInteger();
+		TGA.localOptimumBuster=0;
 		//this.pool=Executors.newFixedThreadPool(threadPoolSize); 
 		//this.secondPool=Executors.newCachedThreadPool();
 		this.currentPopulation=p;
@@ -69,11 +67,11 @@ public class TGA {
 	}
 	
 	
-	public Solution startEngine()
+	public Tour startEngine()
 	{
 		final PMXCrossover[] cross= new PMXCrossover[offspringsPerEpoch/2];
 		sons=new Population(populationSize);
-		Solution[] figli;
+		Tour[] figli;
 		
 		//inizializzo i vettori
 		for(int j=0; j<offspringsPerEpoch/2; j++)
@@ -96,8 +94,8 @@ public class TGA {
 			{
 				cross[i].setPopulation(currentPopulation);
 				figli=cross[i].call();
-				sons.addSolution(figli[0]);
-				sons.addSolution(figli[1]);
+				sons.addTour(figli[0]);
+				sons.addTour(figli[1]);
 			}
 			if(currentEpoch==999)
 				dopo=System.currentTimeMillis();
@@ -111,13 +109,13 @@ public class TGA {
 			//System.out.println("\n3Duncan==Connor"+(TGA.ConnorMacLeod==TGA.DuncanMacLeod));
 	//		System.out.println(currentPopulation);
 			sons.getPopulation().clear();
-			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" Aspiration: "+TGA.tabuCount+" Clones killed: "+TGA.cloneKilled+" LocalBuster: "+TGA.localOptimumBuster+" AVGLen: "+TGA.avgLength);
+			System.out.println("\nEpoch:"+currentEpoch+"\nMutations: "+TGA.mutationCount+" LocalBuster: "+TGA.localOptimumBuster+" AVGLen: "+TGA.avgLength);
 			/*long now=System.currentTimeMillis();
 			double current=(double)((now-TGA.prima)-TGA.timelimit)/130000.0;
 			int tournamentSize=(int)(TGA.tournamentCoefficient*(Math.pow(Math.E,current))*TGA.populationSize+1);
 			System.out.println("Size: "+tournamentSize);
 			*/
-			//	for(Solution s: TGA.highlanders)
+			//	for(Tour s: TGA.highlanders)
 		//	{
 			System.out.println("\nConnor: "+TGA.ConnorMacLeod+"\nRichie: "+TGA.Richie);
 		//	}
@@ -166,7 +164,7 @@ public class TGA {
 		}
 		
 		/*System.out.println("\n\n\n\n----------------Adunanza----------------\n\n");
-		for(Solution s: TGA.highlanders)
+		for(Tour s: TGA.highlanders)
 		{
 			Tour.localSearch(s.getChromosome());
 			System.out.println(s);
