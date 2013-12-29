@@ -2,7 +2,6 @@ package org.tgatsp;
 
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,58 +12,55 @@ import java.util.StringTokenizer;
 //import java.math.*;
 
 
-public class Cliente
+public final class Cliente
 {
-	private final int id;
+	private final short id;
 	private final double x;
 	private final double y;
 	public static Cliente[] listaClienti;
-	public static Cliente[][] nearest;
+	public static short[][] nearest;
+	public static int[][] distancesMatrix;
 	
 	
-	public Cliente (int id, double x, double y)
+	public Cliente (short id, double x, double y)
 	{
 		this.id = id;
 		this.x = x;
 		this.y=y;
 	}
 	
-	public int calculateDistance (Cliente target)
+	public final int calculateDistance (Cliente target)
 	{
 		return (int)(Math.sqrt((this.x - target.x)*(this.x - target.x) + (this.y - target.y)*(this.y - target.y))+0.5);	
 	}
 	
-	public int getId()
+	public final short getId()
 	{
 		return id;
 	}
 	
 	@Override
-	public boolean equals(Object obj)
+	public final boolean equals(Object obj)
 	{
-		if(obj==null)
+		if(this!=obj)
 			return false;
-		
-		Cliente c = (Cliente)obj;
-		if (this==obj || this.id==c.id)
-			return true;
-		else
-			return false;
+		else return true;
 	}
 	
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 	    return this.id;
 	}
 	
-	public String toString()
+	public final String toString()
 	{
 		return ""+id;
 	}
 	
-	public static void findNearest(int numNeighbours)
+	public final static void findNearest(int numNeighbours)
 	{
-		nearest= new Cliente[listaClienti.length][numNeighbours];
+		nearest= new short[listaClienti.length][numNeighbours];
+		distancesMatrix= new int[listaClienti.length+1][listaClienti.length+1];
 		for(int i=0; i<listaClienti.length; i++)
 		{	
 			ArrayList<Cliente> temp=new ArrayList<Cliente>(Arrays.asList(Cliente.listaClienti));
@@ -74,20 +70,22 @@ public class Cliente
 				int minIdx=-1;
 				for(int k=0; k<temp.size(); k++)
 				{
-					if(temp.get(k).equals(listaClienti[i])) continue;
+					if(temp.get(k)==listaClienti[i]) continue;
 					int dist=listaClienti[i].calculateDistance(temp.get(k));
+					if(j==0)
+						distancesMatrix[i+1][k+1]=dist;
 					if(dist<min)
 					{
 						min=dist;
 						minIdx=k;
 					}
 				}
-				nearest[i][j]=temp.remove(minIdx);		
+				nearest[i][j]=temp.remove(minIdx).getId();		
 			}
 		}
 	}
 	
-	public static void init(String file)
+	public final static void init(String file)
 	{
 		
 		//String type;
@@ -105,11 +103,8 @@ public class Cliente
 				String str;
 				
 				str=b.readLine();
-				String[] str_arr= str.split(": ");
-				TGA.nome=str_arr[1];
+				String[] str_arr;
 				str=b.readLine();
-				str_arr= str.split(": ");
-				TGA.comment=str_arr[1];
 				b.readLine();
 				//str_arr= str.split(": ");
 				//type=str_arr[1];
@@ -130,18 +125,16 @@ public class Cliente
 					str=b.readLine();
 					st=new StringTokenizer(str);
 					k= Integer.parseInt(st.nextToken());
-					c=new Cliente(k,Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()));
+					c=new Cliente((short)k,Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()));
 					Cliente.listaClienti[i]=c;
 					//System.out.println(Cliente.listaClienti[i]);			
 				}
 				b.close();
-		}catch(FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
+		}
 		catch(IOException io)
 		{
 			io.printStackTrace();
 		}
+		Cliente.findNearest(30);
 	}
 }

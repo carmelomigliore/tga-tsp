@@ -5,9 +5,8 @@ import java.util.*;
 
 public class Population {
 	
-	private ArrayList<Tour> population; //TODO provare pure LinkedList
+	private ArrayList<Tour> population;
 	private Float sumFitness;
-	private Float sumLength;
 	
 	public Population(int size)
 	{
@@ -29,17 +28,6 @@ public class Population {
 		population.add(s);
 	}
 	
-	public void kill(Tour s)
-	{
-		for (Iterator<Tour> it = population.iterator(); it.hasNext();)
-		{
-			if(it.next().equals(s))
-			{
-				it.remove();
-				break;
-			}
-		}
-	}
 	
 	public int getSize()
 	{
@@ -56,7 +44,7 @@ public class Population {
 		sumFitness=currentSum;
 	}
 	
-	private void calculateLengthSum()
+	/*private void calculateLengthSum()
 	{
 		float currentSum=0;
 		for (Tour s : population)
@@ -64,8 +52,11 @@ public class Population {
 			currentSum+=s.getlength();
 		}
 		sumLength=currentSum;
-	}
+	}*/
 	
+	/*
+	 * Set windows (not used) 
+	 */
 	public void evaluate()
 	{
 		calculateFitnessSum();
@@ -78,6 +69,9 @@ public class Population {
 		//System.out.println(population);
 	}
 	
+	/*
+	 * Tournament selection
+	 */
 	public Tour[] tournamentSelection(int size, Random rand)
 	{
 		int counter=0;
@@ -110,6 +104,10 @@ public class Population {
 		return parents;
 	}
 	
+	
+	/*
+	 * Roulette wheel selection (not used) 
+	 */
 	public Tour selectParent(Random rand)
 	{
 		Float random;
@@ -128,9 +126,10 @@ public class Population {
 	}
 	
 	
-	
-	
-	public void survive(Population newGeneration, Random rand)
+	/*
+	 * Russian roulette survival (not used)
+	 */
+	/*public void survive(Population newGeneration, Random rand)
 	{
 		this.population.ensureCapacity(this.getSize()+newGeneration.getSize());
 		this.population.addAll(this.getSize(), newGeneration.getPopulation());
@@ -166,7 +165,7 @@ public class Population {
 		
 		
 		calculateLengthSum();
-		TGA.avgLength=(int)((this.sumLength/population.size())+0.5F);
+		//TGA.avgLength=(int)((this.sumLength/population.size())+0.5F);
 		//System.out.println(sumFitness);
 		population.get(0).setWindow(population.get(0).getlength()/sumLength);
 		for(int i=1; i<population.size(); i++)
@@ -198,7 +197,7 @@ public class Population {
 					TGA.cloneKilled++;
 				}
 			}
-		}*/
+		}
 		
 		float victim;
 		int j=0;
@@ -214,7 +213,7 @@ public class Population {
 			if(j==population.size())
 				j--;
 			//boolean killingFlag=population.get(j).getKillingFlag();
-			boolean isHighlander= TGA.elitism && (population.get(j)==TGA.DuncanMacLeod);
+			boolean isHighlander= (population.get(j)==TGA.DuncanMacLeod);
 			
 			
 			if(!isHighlander && population.get(j).getKillingFlag()==false)
@@ -240,8 +239,11 @@ public class Population {
 		if(population.size()!=newGeneration.getSize())
 			throw new RuntimeException("You killed more than expected!");
 		
-	}
+	}*/
 	
+	/*
+	 * Survival of the bests among parents and sons
+	 */
 	public void surviveElitism(Population newGeneration, Random rand)
 	{
 		this.population.ensureCapacity(this.getSize()+newGeneration.getSize());
@@ -261,10 +263,7 @@ public class Population {
 			TGA.localOptimumBuster=0;
 		}
 		
-		if(TGA.Richie==null || TGA.ConnorMacLeod.getFitness()>TGA.Richie.getFitness())
-		{
-			TGA.Richie=TGA.ConnorMacLeod;
-		}
+		
 		
 		//System.out.println(evaluateDiversity(this));
 		
@@ -272,6 +271,17 @@ public class Population {
 		if(TGA.localOptimumBuster>TGA.nameccDisasterThreshold) //Namekian disaster
 		{
 			population.clear();
+			if(TGA.Richie==null)
+			{
+				TGA.Richie=TGA.ConnorMacLeod;
+			}
+			if(TGA.ConnorMacLeod.getFitness()>TGA.Richie.getFitness())
+			{
+				
+				//if(((float)(TGA.Richie.getlength()-TGA.ConnorMacLeod.getlength())/(float)TGA.ConnorMacLeod.getlength())>0.0021)
+				//	TGA.stop();
+				TGA.Richie=TGA.ConnorMacLeod;
+			}
 			Population.randomPopulation2Opt(0, TGA.populationSize, this, rand);
 			TGA.ConnorMacLeod=null;
 			TGA.localOptimumBuster=0;
@@ -281,28 +291,9 @@ public class Population {
 		population=new ArrayList<Tour>(population.subList(0, newGeneration.getSize()));	
 	}
 	
-	/*public static void randomPopulation(int startIndex, int num, Population p, Random r)
-	{
-		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
-		int rand1;
-		int j=startIndex;
-		while(j<num+startIndex)
-		{
-			int k = arrayClienti.size();
-			Tour t = new Tour(arrayClienti.size());
-			ArrayList<Cliente> temp = new ArrayList<Cliente> (arrayClienti);
-			for(int i =0; i<arrayClienti.size(); i++)
-			{
-			   	rand1 = r.nextInt(k);
-			   	t.addCliente(i, temp.remove(rand1));
-			   	k--;
-			}
-			p.addTour(t);
-			j++;
-			
-		}
-	}*/
-	
+	/*
+	 * Generate random individuals optimized by fast 2-Opt
+	 */
 	public static void randomPopulation2Opt(int startIndex, int num, Population p, Random r)
 	{
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
@@ -311,12 +302,12 @@ public class Population {
 		while(j<num+startIndex)
 		{
 			int k = arrayClienti.size();
-			Cliente[] t = new Cliente[arrayClienti.size()];
+			short[] t = new short[arrayClienti.size()];
 			ArrayList<Cliente> temp = new ArrayList<Cliente> (arrayClienti);
 			for(int i =0; i<arrayClienti.size(); i++)
 			{
 			   	rand1 = r.nextInt(k);
-			   	t[i]= temp.remove(rand1);
+			   	t[i]= temp.remove(rand1).getId();
 			   	k--;
 			}
 			boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
@@ -329,7 +320,7 @@ public class Population {
 			
 			while(again)
 			{
-				again=Tour.fixedRadiusNolookNear(t,noLook); //cheat the jit
+				again=Tour.fixedRadiusNolookNearMatrix(t,noLook); //cheat the jit
 			}
 			//System.out.println("\n"+t.getlength());
 			Tour tour= new Tour(t,-1);
@@ -345,8 +336,10 @@ public class Population {
 		return population.toString();
 	}
 	
-	
-	public static void nearestNeighbour(Population p,int startIndex, int num, Random r)
+	/*
+	 * Nearest neighbour heuristic (not used)
+	 */
+	/*public static void nearestNeighbour(Population p,int startIndex, int num, Random r)
 	{
 		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
 		int rand1;
@@ -407,64 +400,6 @@ public class Population {
 			j++;
 			temp.clear();
 		}	
-	}
-	
-	
-	/*public static void nearestNeighbour(Population p,int startIndex)
-	{
-		ArrayList<Cliente> arrayClienti = new ArrayList<Cliente> (Arrays.asList(Cliente.listaClienti));
-		int j=startIndex;
-		int index=0;
-		ArrayList<Cliente> temp=new ArrayList<Cliente> ();
-		while(j<Cliente.listaClienti.length+startIndex)
-		{
-			temp.ensureCapacity(arrayClienti.size());
-			temp.addAll(arrayClienti);
-			Tour t = new Tour(arrayClienti.size());
-			float tmp = 0;
-		   	t.addCliente(0, temp.remove(index));
-		   //	System.out.println(t+"\n"+temp);
-			for(int i =0; i<arrayClienti.size()-1; i++)
-			{
-				Cliente ctmp;
-				//System.out.println("Nodo:"+ctmp.toString());
-				tmp=t.getCliente(i).calculateDistance(temp.get(0));
-				ctmp = temp.get(0);
-				float current;
-				for(int l =1; l<temp.size(); l++)
-				{
-					current= t.getCliente(i).calculateDistance(temp.get(l));
-					if(current < tmp)
-					{
-						tmp = current;
-						ctmp= temp.get(l);
-					}
-				}
-				
-			//	System.out.println(t.toString());
-				//System.out.println(temp+"\n"+ctmp);
-				t.addCliente(i+1,ctmp);
-				temp.remove(ctmp);
-			//	System.out.println(t.toString());
-			}
-			Clan c = new Clan(j,TGA.tabuSize);
-	                //Tour s = new Tour(t,c,null);
-			//System.out.println(s.toString());
-			//p.addTour(s);
-			Tour s=new Tour(t,c,null);
-			//System.out.println(s);
-			p.addTour(s);
-			j++;
-			index++;
-			temp.clear();
-		}
-		Tour t = new Tour(arrayClienti.size());
-		t.getTour().clear();
-		t.getTour().addAll(Arrays.asList(Cliente.listaClienti));
-		Clan c = new Clan(j+1,TGA.tabuSize);
-		Tour sol=new Tour(t,c,null);
-		p.addTour(sol);
 	}*/
-	
 	
 }
