@@ -1,5 +1,22 @@
-package org.tgatsp;
+/* Copyright (C) 2014  Carmelo Migliore, Fabrizio Gueli, Alessio Scicolone, Sergio Paccagnin
+ *
+ * This file is part of TGA-TSP
+ *
+ * TGA-TSP is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * TGA-TSP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with TGA-TSP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+package org.tgatsp;
 
 
 import java.util.HashMap;
@@ -42,11 +59,11 @@ public class Crossover{
 		ret[0]=offspring1;
 		ret[1]=offspring2;
 
-		/*if(rand.nextFloat()<0.01)
+		if(rand.nextFloat()<0.001)
 		{
 			ret[0].mutate(rand);
 			ret[1].mutate(rand);
-		}*/
+		}
 		return ret;
 	}
 	
@@ -113,10 +130,10 @@ public class Crossover{
 				}
 			}
 		}
-		if(rand.nextFloat()<0.001)
+		/*if(rand.nextFloat()<0.001)
 		{
 			Tour.mutate(off,rand);
-		}
+		}*/
 		boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
 		
 		boolean again=true;

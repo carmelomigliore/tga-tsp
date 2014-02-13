@@ -1,3 +1,21 @@
+/* Copyright (C) 2014  Carmelo Migliore, Fabrizio Gueli, Alessio Scicolone, Sergio Paccagnin
+ *
+ * This file is part of TGA-TSP
+ *
+ * TGA-TSP is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * TGA-TSP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with TGA-TSP.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.tgatsp;
 
 
@@ -312,15 +330,15 @@ public class Population {
 			}
 			boolean noLook[] = new boolean[Cliente.listaClienti.length+1];
 			
-			for(int i = 0; i< Cliente.listaClienti.length+1; i++)
+			/*for(int i = 0; i< Cliente.listaClienti.length+1; i++)
 			{
 				noLook[i] = false;
-			}
+			}*/
 			boolean again=true;
 			
 			while(again)
 			{
-				again=Tour.fixedRadiusNolookNearMatrix(t,noLook); //cheat the jit
+				again=Tour.fixedRadiusNolookNearMatrix(t,noLook); 
 			}
 			//System.out.println("\n"+t.getlength());
 			Tour tour= new Tour(t,-1);

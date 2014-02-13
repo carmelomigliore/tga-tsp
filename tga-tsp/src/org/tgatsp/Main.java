@@ -1,3 +1,21 @@
+/* Copyright (C) 2014  Carmelo Migliore, Fabrizio Gueli, Alessio Scicolone, Sergio Paccagnin
+ *
+ * This file is part of TGA-TSP
+ *
+ * TGA-TSP is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * TGA-TSP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with TGA-TSP.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.tgatsp;
 
 
@@ -24,17 +42,6 @@ public class Main {
 		
 	
 		readParams(args[0]);
-		
-		//System.out.println(seed);
-		//Random rand= new Random(1387807812941L); //600
-		//Random rand= new Random(1387816411881L); //600
-		//Random rand= new Random(1387842593170L); //seed per dsj1000 con 1000 popolazione 18693000
-		//Random rand= new Random(1387901792703L);
-		//Random rand= new Random(1388060481470L); //seed per u1060 con 1060 popolazione, 224210
-		
-		for(;;)
-		{
-		long seed=System.currentTimeMillis();
 		Random rand= new Random(seed);
 		PrintStream ps=null;
 		try {
@@ -65,9 +72,9 @@ public class Main {
 				TGA algorithm=new TGA(maxEpoch,file,prima, rand);	
 				best=algorithm.startEngine();
 				long dopo=System.currentTimeMillis();
-				System.out.println("Final length: "+best.getlength());
-				writeTour(s,best.getTour(),i);
 				long time=dopo-prima;
+				System.out.println("Final length: "+best.getlength()+" Time: "+time);
+				writeTour(s,best.getTour(),i);	
 				timeSum+=time;
 				if(time<timeMin)
 					timeMin=time;
@@ -82,7 +89,7 @@ public class Main {
 			ps=null;
 			try {
 				ps=new PrintStream(new FileOutputStream("results.csv",true));
-				ps.println(s+","+(float)lengthSum/(float)repetitions+","+min+","+max+","+((float)timeSum/(1000f*repetitions))+","+(float)timeMin/1000f+","+(float)timeMax/1000f+"Seed: "+seed);
+				ps.println(s+","+(float)lengthSum/(float)repetitions+","+min+","+max+","+((float)timeSum/(1000f*repetitions))+","+(float)timeMin/1000f+","+(float)timeMax/1000f);
 				ps.close();		
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -92,22 +99,6 @@ public class Main {
 				ps.close();
 				}
 		}
-		PrintStream ps2=null;
-		try {
-			ps2=new PrintStream(new FileOutputStream("results.csv",true));
-			ps2.println();
-			ps2.close();		
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
-			if(ps2!=null)
-			ps2.close();
-			}
-		}
-		
-		
-	
 	}
 	
 	public static void readParams(String file)
@@ -157,7 +148,7 @@ public class Main {
 		PrintStream ps=null;
 		try {
 			File f=new File(DataFileDir+"/Output_tour/"+instance+".run"+run+".tour");
-			ps=new PrintStream(new FileOutputStream(instance+".run"+run+".tour",false));
+			ps=new PrintStream(new FileOutputStream(f,false));
 			ps.print("NAME : "+instance+".run"+run+".tour\n");
 			ps.print("TYPE : TOUR\n");
 			ps.print("DIMENSION : "+tour.length+"\n");

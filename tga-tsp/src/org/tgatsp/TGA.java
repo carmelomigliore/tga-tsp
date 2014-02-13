@@ -1,3 +1,21 @@
+/* Copyright (C) 2014  Carmelo Migliore, Fabrizio Gueli, Alessio Scicolone, Sergio Paccagnin
+ *
+ * This file is part of TGA-TSP
+ *
+ * TGA-TSP is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * TGA-TSP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with TGA-TSP.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.tgatsp;
 
 
@@ -13,6 +31,7 @@ public class TGA {
 	private boolean stop;
 	private int offspringsPerEpoch;
 	private int currentEpoch;
+	private int neighbourhoodSize;
 	private String instanceFile;
 	private long startTime;
 
@@ -44,7 +63,8 @@ public class TGA {
 		Cliente.init(instanceFile);
 		if(Cliente.listaClienti.length>450)
 		{
-			TGA.populationSize=Cliente.listaClienti.length;
+			this.neighbourhoodSize=90;
+			TGA.populationSize=8000;
 			currentPopulation= new Population(populationSize);
 			TGA.nameccDisasterThreshold=maxEpoch;
 			stopLocal=true;
@@ -53,6 +73,7 @@ public class TGA {
 		else if(Cliente.listaClienti.length>190)
 		{
 			TGA.populationSize=600;
+			this.neighbourhoodSize=20;
 			maxEpoch=700;
 			currentPopulation= new Population(populationSize);
 			TGA.nameccDisasterThreshold=20;
@@ -62,12 +83,13 @@ public class TGA {
 		else
 		{
 			TGA.populationSize=1000;
+			this.neighbourhoodSize=20;
 			currentPopulation= new Population(populationSize);
 			TGA.nameccDisasterThreshold=maxEpoch;
 			stopLocal=true;
 			tournamentCoefficient=1;
 		}
-		
+		Cliente.findNearest(neighbourhoodSize);
 		offspringsPerEpoch=populationSize;
 		Population.randomPopulation2Opt(0, populationSize, currentPopulation, rand);
 		final Crossover[] cross= new Crossover[offspringsPerEpoch/2];
@@ -90,10 +112,10 @@ public class TGA {
 			}
 			currentPopulation.surviveElitism(sons, rand);
 			sons.getPopulation().clear();
-			//System.out.println("Epoch: "+currentEpoch+" LocalBuster: "+localOptimumBuster+"\nConnor: "+TGA.ConnorMacLeod+"\nRichie: "+TGA.Richie);
+			System.out.println("Epoch: "+currentEpoch+" LocalBuster: "+localOptimumBuster+"\nConnor: "+TGA.ConnorMacLeod+"\nRichie: "+TGA.Richie);
 		
 				
-			if((stopLocal && localOptimumBuster>30) || (System.currentTimeMillis()-startTime)>290000)
+			if((stopLocal && localOptimumBuster>30) || (System.currentTimeMillis()-startTime)>2950000)
 			{
 				stop=true;
 			}
